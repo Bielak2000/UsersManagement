@@ -28,11 +28,23 @@ CREATE TABLE users.company
     CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES users.address (id)
 );
 
+CREATE TABLE users.user_settings
+(
+    id                 uuid PRIMARY KEY,
+    sms_notification   boolean NOT NULL,
+    app_notification   boolean NOT NULL,
+    email_notification boolean NOT NULL,
+    created_at         DATE    NOT NULL,
+    modified_at        DATE    NOT NULL,
+    deleted            boolean NOT NULL
+);
+
 CREATE TABLE users.users
 (
     id               uuid PRIMARY KEY,
     company_id       uuid,
     address_id       uuid,
+    user_settings_id uuid         NOT NULL,
     name             VARCHAR(100) NOT NULL,
     surname          VARCHAR(100) NOT NULL,
     email            VARCHAR(100) NOT NULL,
@@ -44,18 +56,6 @@ CREATE TABLE users.users
     last_activity_at DATE         NOT NULL,
     deleted          boolean      NOT NULL,
     CONSTRAINT fk_company FOREIGN KEY (company_id) REFERENCES users.company (id),
-    CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES users.address (id)
-);
-
-CREATE TABLE users.user_settings
-(
-    id                 uuid PRIMARY KEY,
-    user_id            uuid    NOT NULL,
-    sms_notification   boolean NOT NULL,
-    app_notification   boolean NOT NULL,
-    email_notification boolean NOT NULL,
-    created_at         DATE    NOT NULL,
-    modified_at        DATE    NOT NULL,
-    deleted            boolean NOT NULL,
-    CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users.users (id)
+    CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES users.address (id),
+    CONSTRAINT fk_user_settings FOREIGN KEY (user_settings_id) REFERENCES users.user_settings (id)
 );

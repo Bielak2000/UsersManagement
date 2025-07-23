@@ -15,4 +15,10 @@ Add dependency to `pom.xml` file as below:
 </dependency>
 ```
 
-NOTE! Remember to start flaway files in your project with 'V1...'.
+**NOTE!**
+Remember to start flyway files in your project with 'V1...' and add below annotation above main spring boot application
+class:
+
+```
+@Import({users.management.configuration.UsersManagementConfiguration.class})
+```
