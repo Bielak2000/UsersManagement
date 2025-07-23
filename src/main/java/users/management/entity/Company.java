@@ -36,7 +36,7 @@ public class Company extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<User> users;
 
     public Company(CompanyFormDTO companyFormDTO, Address address) {
