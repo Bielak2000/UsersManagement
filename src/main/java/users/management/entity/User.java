@@ -3,9 +3,11 @@ package users.management.entity;
 
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,6 +44,9 @@ public class User extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "users_settings_id", referencedColumnName = "id")
+    private UserSettings userSettings;
 
     public User(UserFormDTO userFormDTO, String password, Address address, Company company) {
         super(UUID.randomUUID());
@@ -52,6 +57,9 @@ public class User extends BaseEntity {
         this.surname = userFormDTO.surname();
         this.email = userFormDTO.email();
         this.phoneNumber = userFormDTO.phoneNumber();
+        this.address = address;
+        this.company = company;
+        this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);
     }
 
     public void update(UserFormDTO userFormDTO, Address address, Company company) {

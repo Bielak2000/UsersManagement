@@ -3,6 +3,7 @@ package users.management.service;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import users.management.dto.AddressFormDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.entity.Address;
@@ -14,7 +15,6 @@ import users.management.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -33,14 +33,19 @@ public class UserService {
         return userRepository.findAllByCompanyId(companyId).stream().map(UserDTO::create).toList();
     }
 
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email %s doesn't exists.", email)));
+    }
+
     @Transactional
-    public void createUser(UserFormDTO userFormDTO, Address address, Company company) {
+    public void create(UserFormDTO userFormDTO, Address address, Company company) {
         if (userFormDTO.password().equals(userFormDTO.confirmationPassword())) {
             if (userRepository.findByEmail(userFormDTO.email()).isEmpty()) {
                 User user = new User(userFormDTO, passwordEncoder.encode(userFormDTO.password()), address, company);
                 userRepository.save(user);
             } else {
-                throw new BadRequestException(String.format("User with email %s just exists.", userFormDTO.email()));
+                throw new BadRequestException(String.format("User with email %s already exists.", userFormDTO.email()));
             }
 
         } else {
@@ -50,26 +55,24 @@ public class UserService {
 
     @Transactional
     public void updateLastActivityUser(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            user.get().setLastActivityAt(LocalDateTime.now());
-            userRepository.save(user.get());
-        } else {
-            throw new BadRequestException(String.format("User with email %s just exists.", email));
-        }
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email %s doesn't exists.", email)));
+        user.setLastActivityAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     @Transactional
-    public void updateUser(String email, UserFormDTO userFormDTO, Company company) throws BadRequestException {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            Address address = userFormDTO.addressFormDTO() != null ? user.getAddress().update(userFormDTO.addressFormDTO()) : null;
-            user.update(userFormDTO, address, company);
-            userRepository.save(user);
-        } else {
-            throw new NotFoundException(String.format("User with email %s address already exists.", email));
-        }
+    public void update(String email, UserFormDTO userFormDTO, Company company) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email %s doesn't exists.", email)));
+        Address address = updateUserAddress(user, userFormDTO.addressFormDTO());
+        user.update(userFormDTO, address, company);
+        userRepository.save(user);
+    }
+
+    private Address updateUserAddress(User user, AddressFormDTO addressFormDTO) {
+        if (addressFormDTO != null) {
+            if (user.getAddress() == null) return new Address(addressFormDTO);
+            else return user.getAddress().update(addressFormDTO);
+        } else return null;
     }
 
 }

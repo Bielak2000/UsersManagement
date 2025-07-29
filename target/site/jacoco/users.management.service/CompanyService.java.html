@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompanyService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management.service</a> &gt; <span class="el_source">CompanyService.java</span></div><h1>CompanyService.java</h1><pre class="source lang-java linenums">package users.management.service;
+
+import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+import users.management.dto.CompanyDTO;
+import users.management.dto.CompanyFormDTO;
+import users.management.entity.Address;
+import users.management.entity.Company;
+import users.management.exception.NotFoundException;
+import users.management.repository.CompanyRepository;
+
+import java.util.List;
+import java.util.UUID;
+
+@AllArgsConstructor
+public class CompanyService {
+
+    private final CompanyRepository companyRepository;
+
+    @Transactional(readOnly = true)
+    public List&lt;CompanyDTO&gt; getCompanies() {
+<span class="fc" id="L22">        return companyRepository.findAll().stream().map(CompanyDTO::create).toList();</span>
+    }
+
+    @Transactional(readOnly = true)
+    public Company getById(UUID companyID) {
+<span class="fc" id="L27">        return companyRepository.findById(companyID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;Company with id %s not found&quot;, companyID)));</span>
+    }
+
+    @Transactional
+    public Company create(CompanyFormDTO companyFormDTO, Address address) {
+<span class="fc" id="L32">        Company company = new Company(companyFormDTO, address);</span>
+<span class="fc" id="L33">        companyRepository.save(company);</span>
+<span class="fc" id="L34">        return company;</span>
+    }
+
+    @Transactional
+    public Company update(UUID companyID, CompanyFormDTO companyFormDTO) {
+<span class="fc" id="L39">        Company company = companyRepository.findById(companyID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;Company with id %s not found&quot;, companyID)));</span>
+<span class="fc" id="L40">        Address address = company.getAddress().update(companyFormDTO.addressFormDTO());</span>
+<span class="fc" id="L41">        company.update(companyFormDTO, address);</span>
+<span class="fc" id="L42">        companyRepository.save(company);</span>
+<span class="fc" id="L43">        return company;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

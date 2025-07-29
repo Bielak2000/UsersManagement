@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management.dto</a> &gt; <span class="el_source">UserDTO.java</span></div><h1>UserDTO.java</h1><pre class="source lang-java linenums">package users.management.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.annotation.Nullable;
+import lombok.Builder;
+import users.management.entity.User;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Builder
+<span class="fc" id="L14">public record UserDTO(@NotNull UUID id,</span>
+                      @NotNull @JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;) LocalDateTime createdAt,
+                      @NotNull @JsonFormat(pattern = &quot;yyyy-MM-dd HH:mm:ss&quot;) LocalDateTime lastActivityAt,
+                      @NotEmpty(message = &quot;Name can't be empty&quot;) String name,
+                      @NotEmpty(message = &quot;Surname can't be empty&quot;) String surname,
+                      @NotEmpty(message = &quot;Email can't be emtpy&quot;) String email,
+                      @Nullable String phoneNumber,
+                      @Nullable CompanyDTO companyDTO,
+                      @Nullable AddressFormDTO addressDTO) {
+    public static UserDTO create(User user) {
+<span class="fc" id="L24">        return UserDTO.builder()</span>
+<span class="fc" id="L25">                .id(user.getId())</span>
+<span class="fc" id="L26">                .createdAt(user.getCreatedAt())</span>
+<span class="fc" id="L27">                .lastActivityAt(user.getLastActivityAt())</span>
+<span class="fc" id="L28">                .name(user.getName())</span>
+<span class="fc" id="L29">                .surname(user.getSurname())</span>
+<span class="fc" id="L30">                .email(user.getEmail())</span>
+<span class="fc" id="L31">                .phoneNumber(user.getPhoneNumber())</span>
+<span class="fc" id="L32">                .companyDTO(CompanyDTO.create(user.getCompany()))</span>
+<span class="fc" id="L33">                .addressDTO(AddressFormDTO.create(user.getAddress()))</span>
+<span class="fc" id="L34">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

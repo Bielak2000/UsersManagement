@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package users.management.service;
+
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import users.management.dto.AddressFormDTO;
+import users.management.dto.UserDTO;
+import users.management.dto.UserFormDTO;
+import users.management.entity.Address;
+import users.management.entity.Company;
+import users.management.entity.User;
+import users.management.exception.BadRequestException;
+import users.management.exception.NotFoundException;
+import users.management.repository.UserRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@AllArgsConstructor
+public class UserService {
+
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public List&lt;UserDTO&gt; getUsers() {
+<span class="fc" id="L29">        return userRepository.findAll().stream().map(UserDTO::create).toList();</span>
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;UserDTO&gt; getUsersByCompanyId(UUID companyId) {
+<span class="fc" id="L34">        return userRepository.findAllByCompanyId(companyId).stream().map(UserDTO::create).toList();</span>
+    }
+
+    @Transactional
+    public void create(UserFormDTO userFormDTO, Address address, Company company) {
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (userFormDTO.password().equals(userFormDTO.confirmationPassword())) {</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            if (userRepository.findByEmail(userFormDTO.email()).isEmpty()) {</span>
+<span class="fc" id="L41">                User user = new User(userFormDTO, passwordEncoder.encode(userFormDTO.password()), address, company);</span>
+<span class="fc" id="L42">                userRepository.save(user);</span>
+<span class="fc" id="L43">            } else {</span>
+<span class="fc" id="L44">                throw new BadRequestException(String.format(&quot;User with email %s already exists.&quot;, userFormDTO.email()));</span>
+            }
+
+        } else {
+<span class="fc" id="L48">            throw new BadRequestException(&quot;Passwords are different.&quot;);</span>
+        }
+<span class="fc" id="L50">    }</span>
+
+    @Transactional
+    public void updateLastActivityUser(String email) {
+<span class="fc" id="L54">        Optional&lt;User&gt; user = userRepository.findByEmail(email);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (user.isPresent()) {</span>
+<span class="fc" id="L56">            user.get().setLastActivityAt(LocalDateTime.now());</span>
+<span class="fc" id="L57">            userRepository.save(user.get());</span>
+        } else {
+<span class="fc" id="L59">            throw new NotFoundException(String.format(&quot;User with email %s doesn't exists.&quot;, email));</span>
+        }
+<span class="fc" id="L61">    }</span>
+
+    @Transactional
+    public void update(String email, UserFormDTO userFormDTO, Company company) {
+<span class="fc" id="L65">        Optional&lt;User&gt; optionalUser = userRepository.findByEmail(email);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (optionalUser.isPresent()) {</span>
+<span class="fc" id="L67">            User user = optionalUser.get();</span>
+<span class="fc" id="L68">            Address address = updateUserAddress(user, userFormDTO.addressFormDTO());</span>
+<span class="fc" id="L69">            user.update(userFormDTO, address, company);</span>
+<span class="fc" id="L70">            userRepository.save(user);</span>
+<span class="fc" id="L71">        } else {</span>
+<span class="fc" id="L72">            throw new NotFoundException(String.format(&quot;User with email %s doesn't exists.&quot;, email));</span>
+        }
+<span class="fc" id="L74">    }</span>
+
+    private Address updateUserAddress(User user, AddressFormDTO addressFormDTO) {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (addressFormDTO != null) {</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            if (user.getAddress() == null) return new Address(addressFormDTO);</span>
+<span class="fc" id="L79">            else return user.getAddress().update(addressFormDTO);</span>
+<span class="fc" id="L80">        } else return null;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

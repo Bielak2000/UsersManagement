@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management.entity</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package users.management.entity;
+
+
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import users.management.dto.UserFormDTO;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Getter
+@Table(schema = &quot;users&quot;, name = &quot;users&quot;)
+@Access(AccessType.FIELD)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = &quot;deleted = false&quot;)
+@SQLDelete(sql = &quot;UPDATE users.users SET deleted = true WHERE id =?&quot;)
+public class User extends BaseEntity {
+
+    private String name;
+    private String surname;
+    private String email;
+    private String role;
+    private String phoneNumber;
+    @Setter
+    private String password;
+    @Setter
+    private LocalDateTime lastActivityAt;
+    @ManyToOne
+    @JoinColumn(name = &quot;address_id&quot;, nullable = false)
+    private Address address;
+    @ManyToOne
+    @JoinColumn(name = &quot;company_id&quot;, nullable = false)
+    private Company company;
+
+    public User(UserFormDTO userFormDTO, String password, Address address, Company company) {
+<span class="fc" id="L47">        super(UUID.randomUUID());</span>
+<span class="fc" id="L48">        this.lastActivityAt = LocalDateTime.now();</span>
+<span class="fc" id="L49">        this.name = userFormDTO.name();</span>
+<span class="fc" id="L50">        this.role = userFormDTO.role();</span>
+<span class="fc" id="L51">        this.password = password;</span>
+<span class="fc" id="L52">        this.surname = userFormDTO.surname();</span>
+<span class="fc" id="L53">        this.email = userFormDTO.email();</span>
+<span class="fc" id="L54">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+<span class="fc" id="L55">        this.address = address;</span>
+<span class="fc" id="L56">        this.company = company;</span>
+<span class="fc" id="L57">    }</span>
+
+    public void update(UserFormDTO userFormDTO, Address address, Company company) {
+<span class="fc" id="L60">        this.name = userFormDTO.name();</span>
+<span class="fc" id="L61">        this.role = userFormDTO.role();</span>
+<span class="fc" id="L62">        this.surname = userFormDTO.surname();</span>
+<span class="fc" id="L63">        this.email = userFormDTO.email();</span>
+<span class="fc" id="L64">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+<span class="fc" id="L65">        this.address = address;</span>
+<span class="fc" id="L66">        this.company = company;</span>
+<span class="fc" id="L67">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

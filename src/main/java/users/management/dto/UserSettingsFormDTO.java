@@ -1,9 +1,19 @@
 package users.management.dto;
 
-import java.util.UUID;
+import lombok.Builder;
+import users.management.entity.UserSettings;
 
-public record UserSettingsFormDTO(UUID userId,
-                                  boolean smsNotification,
+@Builder
+public record UserSettingsFormDTO(boolean smsNotification,
                                   boolean appNotification,
                                   boolean emailNotification) {
+
+    public static UserSettingsFormDTO create(UserSettings userSettings) {
+        return UserSettingsFormDTO.builder()
+                .smsNotification(userSettings.isSmsNotification())
+                .appNotification(userSettings.isAppNotification())
+                .emailNotification(userSettings.isEmailNotification())
+                .build();
+    }
+
 }

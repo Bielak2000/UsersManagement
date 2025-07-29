@@ -16,6 +16,8 @@
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/AddressRepository.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/CompanyRepository.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/UserRepository.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/UserSettingsRepository.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/AddressService.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/CompanyService.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/UserService.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/service/UserSettingsService.java

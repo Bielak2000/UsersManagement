@@ -9,11 +9,14 @@ users/management/dto/CompanyDTO.class
 users/management/entity/Address.class
 users/management/dto/UserDTO$UserDTOBuilder.class
 users/management/exception/NotFoundException.class
+users/management/repository/UserSettingsRepository.class
 users/management/entity/UserSettings.class
 users/management/dto/AddressFormDTO$AddressFormDTOBuilder.class
+users/management/dto/UserSettingsFormDTO$UserSettingsFormDTOBuilder.class
 users/management/dto/CompanyFormDTO.class
 users/management/dto/CompanyDTO$CompanyDTOBuilder.class
 users/management/service/AddressService.class
+users/management/service/UserSettingsService.class
 users/management/entity/User.class
 users/management/dto/AddressFormDTO.class
 users/management/entity/Company.class

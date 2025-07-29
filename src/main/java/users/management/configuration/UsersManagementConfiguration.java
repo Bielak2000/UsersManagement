@@ -10,9 +10,11 @@ import users.management.UsersManagementFacade;
 import users.management.repository.AddressRepository;
 import users.management.repository.CompanyRepository;
 import users.management.repository.UserRepository;
+import users.management.repository.UserSettingsRepository;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
 import users.management.service.UserService;
+import users.management.service.UserSettingsService;
 
 @Configuration
 @ComponentScan(basePackages = "users.management")
@@ -36,8 +38,13 @@ public class UsersManagementConfiguration {
     }
 
     @Bean
-    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService) {
-        return new UsersManagementFacade(companyService, addressService, userService);
+    public UserSettingsService userSettingsService(UserSettingsRepository userSettingsRepository) {
+        return new UserSettingsService(userSettingsRepository);
+    }
+
+    @Bean
+    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService) {
+        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService);
     }
 
 }

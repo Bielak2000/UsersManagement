@@ -35,11 +35,12 @@ public class CompanyService {
     }
 
     @Transactional
-    public void update(UUID companyID, CompanyFormDTO companyFormDTO) {
+    public Company update(UUID companyID, CompanyFormDTO companyFormDTO) {
         Company company = companyRepository.findById(companyID).orElseThrow(() -> new NotFoundException(String.format("Company with id %s not found", companyID)));
         Address address = company.getAddress().update(companyFormDTO.addressFormDTO());
         company.update(companyFormDTO, address);
         companyRepository.save(company);
+        return company;
     }
 
 }

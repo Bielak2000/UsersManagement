@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsersManagementFacade.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management</a> &gt; <span class="el_source">UsersManagementFacade.java</span></div><h1>UsersManagementFacade.java</h1><pre class="source lang-java linenums">package users.management;
+
+import lombok.AllArgsConstructor;
+import users.management.dto.AddressFormDTO;
+import users.management.dto.CompanyDTO;
+import users.management.dto.CompanyFormDTO;
+import users.management.dto.UserDTO;
+import users.management.dto.UserFormDTO;
+import users.management.entity.Address;
+import users.management.entity.Company;
+import users.management.service.AddressService;
+import users.management.service.CompanyService;
+import users.management.service.UserService;
+
+import java.util.List;
+import java.util.UUID;
+
+@AllArgsConstructor
+public class UsersManagementFacade {
+
+    private CompanyService companyService;
+    private AddressService addressService;
+    private UserService userService;
+
+    public void createCompany(CompanyFormDTO companyFormDTO) {
+<span class="nc" id="L26">        Address address = addressService.create(companyFormDTO.addressFormDTO());</span>
+<span class="nc" id="L27">        companyService.create(companyFormDTO, address);</span>
+<span class="nc" id="L28">    }</span>
+
+    public void createUser(UserFormDTO userFormDTO) {
+<span class="nc" id="L31">        Address address = createAddressForUser(userFormDTO.addressFormDTO());</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
+<span class="nc" id="L33">        userService.create(userFormDTO, address, company);</span>
+<span class="nc" id="L34">    }</span>
+
+    public void updateCompany(UUID companyID, CompanyFormDTO companyFormDTO) {
+<span class="nc" id="L37">        companyService.update(companyID, companyFormDTO);</span>
+<span class="nc" id="L38">    }</span>
+
+    public void updateUser(String email, UserFormDTO userFormDTO) {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
+<span class="nc" id="L42">        userService.update(email, userFormDTO, company);</span>
+<span class="nc" id="L43">    }</span>
+
+    public List&lt;CompanyDTO&gt; getCompanies() {
+<span class="nc" id="L46">        return companyService.getCompanies();</span>
+    }
+
+    public List&lt;UserDTO&gt; getUsers() {
+<span class="nc" id="L50">        return userService.getUsers();</span>
+    }
+
+    public List&lt;UserDTO&gt; getUsersByCompanyId(UUID companyId) {
+<span class="nc" id="L54">        return userService.getUsersByCompanyId(companyId);</span>
+    }
+
+    public void updateLastActivityUser(String email) {
+<span class="nc" id="L58">        userService.updateLastActivityUser(email);</span>
+<span class="nc" id="L59">    }</span>
+
+    private Address createAddressForUser(AddressFormDTO addressFormDTO) {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (addressFormDTO != null) {</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            if (addressFormDTO.addressID() != null) return addressService.getById(addressFormDTO.addressID());</span>
+<span class="nc" id="L64">            else return new Address(addressFormDTO);</span>
+<span class="nc" id="L65">        } else return null;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

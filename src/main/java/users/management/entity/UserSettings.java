@@ -4,6 +4,7 @@ package users.management.entity;
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,12 +27,15 @@ public class UserSettings extends BaseEntity {
     private boolean smsNotification;
     private boolean appNotification;
     private boolean emailNotification;
+    @OneToOne(mappedBy = "user_settings")
+    private User user;
 
-    public UserSettings(UserSettingsFormDTO userSettingsFormDTO) {
+    public UserSettings(UserSettingsFormDTO userSettingsFormDTO, User user) {
         super(UUID.randomUUID());
-        this.smsNotification = userSettingsFormDTO.smsNotification();
-        this.emailNotification = userSettingsFormDTO.emailNotification();
-        this.appNotification = userSettingsFormDTO.appNotification();
+        this.smsNotification = userSettingsFormDTO != null && userSettingsFormDTO.smsNotification();
+        this.emailNotification = userSettingsFormDTO != null && userSettingsFormDTO.emailNotification();
+        this.appNotification = userSettingsFormDTO != null && userSettingsFormDTO.appNotification();
+        this.user = user;
     }
 
     public void update(UserSettingsFormDTO userSettingsFormDTO) {

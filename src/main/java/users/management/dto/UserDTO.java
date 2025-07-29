@@ -19,7 +19,8 @@ public record UserDTO(@NotNull UUID id,
                       @NotEmpty(message = "Email can't be emtpy") String email,
                       @Nullable String phoneNumber,
                       @Nullable CompanyDTO companyDTO,
-                      @Nullable AddressFormDTO addressDTO) {
+                      @Nullable AddressFormDTO addressDTO,
+                      @NotNull UserSettingsFormDTO userSettingsFormDTO) {
     public static UserDTO create(User user) {
         return UserDTO.builder()
                 .id(user.getId())
@@ -31,6 +32,7 @@ public record UserDTO(@NotNull UUID id,
                 .phoneNumber(user.getPhoneNumber())
                 .companyDTO(CompanyDTO.create(user.getCompany()))
                 .addressDTO(AddressFormDTO.create(user.getAddress()))
+                .userSettingsFormDTO(UserSettingsFormDTO.create(user.getUserSettings()))
                 .build();
     }
 }

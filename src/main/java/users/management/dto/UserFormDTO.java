@@ -15,5 +15,6 @@ public record UserFormDTO(@NotEmpty(message = "Name can't be empty") String name
                           @NotEmpty(message = "Role can't be empty") String role,
                           @Nullable @Pattern(regexp = "^[0-9]{9}|$") String phoneNumber,
                           @Nullable UUID companyID,
-                          @Nullable AddressFormDTO addressFormDTO) {
+                          @Nullable AddressFormDTO addressFormDTO,
+                          @Nullable UserSettingsFormDTO userSettingsFormDTO) {
 }
