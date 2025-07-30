@@ -15,6 +15,7 @@ import java.util.UUID;
                           @NotEmpty(message = &quot;Role can't be empty&quot;) String role,
                           @Nullable @Pattern(regexp = &quot;^[0-9]{9}|$&quot;) String phoneNumber,
                           @Nullable UUID companyID,
-                          @Nullable AddressFormDTO addressFormDTO) {
+                          @Nullable AddressFormDTO addressFormDTO,
+                          @Nullable UserSettingsFormDTO userSettingsFormDTO) {
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

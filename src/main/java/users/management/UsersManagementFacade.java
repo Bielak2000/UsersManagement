@@ -46,6 +46,15 @@ public class UsersManagementFacade {
         userService.update(email, userFormDTO, company);
     }
 
+    public void updateLastActivityUser(String email) {
+        userService.updateLastActivityUser(email);
+    }
+
+    public void updateUserSettings(String email, UserSettingsFormDTO userSettingsFormDTO) {
+        User user = userService.getUserByEmail(email);
+        userSettingsService.updateUserSettings(user, userSettingsFormDTO);
+    }
+
     public List<CompanyDTO> getCompanies() {
         return companyService.getCompanies();
     }
@@ -56,15 +65,6 @@ public class UsersManagementFacade {
 
     public List<UserDTO> getUsersByCompanyId(UUID companyId) {
         return userService.getUsersByCompanyId(companyId);
-    }
-
-    public void updateLastActivityUser(String email) {
-        userService.updateLastActivityUser(email);
-    }
-
-    public void updateUserSettings(String email, UserSettingsFormDTO userSettingsFormDTO) {
-        User user = userService.getUserByEmail(email);
-        userSettingsService.updateUserSettings(user, userSettingsFormDTO);
     }
 
     private Address createAddressForUser(AddressFormDTO addressFormDTO) {

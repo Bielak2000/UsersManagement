@@ -6,11 +6,14 @@ import users.management.dto.CompanyDTO;
 import users.management.dto.CompanyFormDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
+import users.management.dto.UserSettingsFormDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
+import users.management.entity.User;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
 import users.management.service.UserService;
+import users.management.service.UserSettingsService;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,48 +24,54 @@ public class UsersManagementFacade {
     private CompanyService companyService;
     private AddressService addressService;
     private UserService userService;
+    private UserSettingsService userSettingsService;
 
     public void createCompany(CompanyFormDTO companyFormDTO) {
-<span class="nc" id="L26">        Address address = addressService.create(companyFormDTO.addressFormDTO());</span>
-<span class="nc" id="L27">        companyService.create(companyFormDTO, address);</span>
-<span class="nc" id="L28">    }</span>
+<span class="fc" id="L30">        Address address = addressService.create(companyFormDTO.addressFormDTO());</span>
+<span class="fc" id="L31">        companyService.create(companyFormDTO, address);</span>
+<span class="fc" id="L32">    }</span>
 
     public void createUser(UserFormDTO userFormDTO) {
-<span class="nc" id="L31">        Address address = createAddressForUser(userFormDTO.addressFormDTO());</span>
-<span class="nc bnc" id="L32" title="All 2 branches missed.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
-<span class="nc" id="L33">        userService.create(userFormDTO, address, company);</span>
-<span class="nc" id="L34">    }</span>
+<span class="fc" id="L35">        Address address = createAddressForUser(userFormDTO.addressFormDTO());</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
+<span class="fc" id="L37">        userService.create(userFormDTO, address, company);</span>
+<span class="fc" id="L38">    }</span>
 
     public void updateCompany(UUID companyID, CompanyFormDTO companyFormDTO) {
-<span class="nc" id="L37">        companyService.update(companyID, companyFormDTO);</span>
-<span class="nc" id="L38">    }</span>
+<span class="fc" id="L41">        companyService.update(companyID, companyFormDTO);</span>
+<span class="fc" id="L42">    }</span>
 
     public void updateUser(String email, UserFormDTO userFormDTO) {
-<span class="nc bnc" id="L41" title="All 2 branches missed.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
-<span class="nc" id="L42">        userService.update(email, userFormDTO, company);</span>
-<span class="nc" id="L43">    }</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
+<span class="fc" id="L46">        userService.update(email, userFormDTO, company);</span>
+<span class="fc" id="L47">    }</span>
+
+    public void updateLastActivityUser(String email) {
+<span class="fc" id="L50">        userService.updateLastActivityUser(email);</span>
+<span class="fc" id="L51">    }</span>
+
+    public void updateUserSettings(String email, UserSettingsFormDTO userSettingsFormDTO) {
+<span class="fc" id="L54">        User user = userService.getUserByEmail(email);</span>
+<span class="fc" id="L55">        userSettingsService.updateUserSettings(user, userSettingsFormDTO);</span>
+<span class="fc" id="L56">    }</span>
 
     public List&lt;CompanyDTO&gt; getCompanies() {
-<span class="nc" id="L46">        return companyService.getCompanies();</span>
+<span class="fc" id="L59">        return companyService.getCompanies();</span>
     }
 
     public List&lt;UserDTO&gt; getUsers() {
-<span class="nc" id="L50">        return userService.getUsers();</span>
+<span class="fc" id="L63">        return userService.getUsers();</span>
     }
 
     public List&lt;UserDTO&gt; getUsersByCompanyId(UUID companyId) {
-<span class="nc" id="L54">        return userService.getUsersByCompanyId(companyId);</span>
+<span class="fc" id="L67">        return userService.getUsersByCompanyId(companyId);</span>
     }
 
-    public void updateLastActivityUser(String email) {
-<span class="nc" id="L58">        userService.updateLastActivityUser(email);</span>
-<span class="nc" id="L59">    }</span>
-
     private Address createAddressForUser(AddressFormDTO addressFormDTO) {
-<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (addressFormDTO != null) {</span>
-<span class="nc bnc" id="L63" title="All 2 branches missed.">            if (addressFormDTO.addressID() != null) return addressService.getById(addressFormDTO.addressID());</span>
-<span class="nc" id="L64">            else return new Address(addressFormDTO);</span>
-<span class="nc" id="L65">        } else return null;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (addressFormDTO != null) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (addressFormDTO.addressID() != null) return addressService.getById(addressFormDTO.addressID());</span>
+<span class="fc" id="L73">            else return new Address(addressFormDTO);</span>
+<span class="fc" id="L74">        } else return null;</span>
     }
 
 }

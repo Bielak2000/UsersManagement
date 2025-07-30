@@ -10,34 +10,41 @@ import users.management.UsersManagementFacade;
 import users.management.repository.AddressRepository;
 import users.management.repository.CompanyRepository;
 import users.management.repository.UserRepository;
+import users.management.repository.UserSettingsRepository;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
 import users.management.service.UserService;
+import users.management.service.UserSettingsService;
 
 @Configuration
 @ComponentScan(basePackages = &quot;users.management&quot;)
 @EntityScan(basePackages = &quot;users.management.entity&quot;)
 @EnableJpaRepositories(&quot;users.management.repository&quot;)
-<span class="nc" id="L21">public class UsersManagementConfiguration {</span>
+<span class="nc" id="L23">public class UsersManagementConfiguration {</span>
 
     @Bean
     public AddressService addressService(AddressRepository addressRepository) {
-<span class="nc" id="L25">        return new AddressService(addressRepository);</span>
+<span class="nc" id="L27">        return new AddressService(addressRepository);</span>
     }
 
     @Bean
     public CompanyService companyService(CompanyRepository companyRepository) {
-<span class="nc" id="L30">        return new CompanyService(companyRepository);</span>
+<span class="nc" id="L32">        return new CompanyService(companyRepository);</span>
     }
 
     @Bean
     public UserService userService(UserRepository userRepository) {
-<span class="nc" id="L35">        return new UserService(new BCryptPasswordEncoder(), userRepository);</span>
+<span class="nc" id="L37">        return new UserService(new BCryptPasswordEncoder(), userRepository);</span>
     }
 
     @Bean
-    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService) {
-<span class="nc" id="L40">        return new UsersManagementFacade(companyService, addressService, userService);</span>
+    public UserSettingsService userSettingsService(UserSettingsRepository userSettingsRepository) {
+<span class="nc" id="L42">        return new UserSettingsService(userSettingsRepository);</span>
+    }
+
+    @Bean
+    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService) {
+<span class="nc" id="L47">        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService);</span>
     }
 
 }

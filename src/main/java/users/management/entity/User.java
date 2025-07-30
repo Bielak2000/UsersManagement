@@ -39,10 +39,10 @@ public class User extends BaseEntity {
     @Setter
     private LocalDateTime lastActivityAt;
     @ManyToOne
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id")
     private Address address;
     @ManyToOne
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id")
     private Company company;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "users_settings_id", referencedColumnName = "id")

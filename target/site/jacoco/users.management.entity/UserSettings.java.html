@@ -4,6 +4,7 @@
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,19 +27,22 @@ public class UserSettings extends BaseEntity {
     private boolean smsNotification;
     private boolean appNotification;
     private boolean emailNotification;
+    @OneToOne(mappedBy = &quot;user_settings&quot;)
+    private User user;
 
-    public UserSettings(UserSettingsFormDTO userSettingsFormDTO) {
-<span class="nc" id="L31">        super(UUID.randomUUID());</span>
-<span class="nc" id="L32">        this.smsNotification = userSettingsFormDTO.smsNotification();</span>
-<span class="nc" id="L33">        this.emailNotification = userSettingsFormDTO.emailNotification();</span>
-<span class="nc" id="L34">        this.appNotification = userSettingsFormDTO.appNotification();</span>
-<span class="nc" id="L35">    }</span>
+    public UserSettings(UserSettingsFormDTO userSettingsFormDTO, User user) {
+<span class="fc" id="L34">        super(UUID.randomUUID());</span>
+<span class="pc bpc" id="L35" title="1 of 4 branches missed.">        this.smsNotification = userSettingsFormDTO != null &amp;&amp; userSettingsFormDTO.smsNotification();</span>
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">        this.emailNotification = userSettingsFormDTO != null &amp;&amp; userSettingsFormDTO.emailNotification();</span>
+<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        this.appNotification = userSettingsFormDTO != null &amp;&amp; userSettingsFormDTO.appNotification();</span>
+<span class="fc" id="L38">        this.user = user;</span>
+<span class="fc" id="L39">    }</span>
 
     public void update(UserSettingsFormDTO userSettingsFormDTO) {
-<span class="nc" id="L38">        this.smsNotification = userSettingsFormDTO.smsNotification();</span>
-<span class="nc" id="L39">        this.emailNotification = userSettingsFormDTO.emailNotification();</span>
-<span class="nc" id="L40">        this.appNotification = userSettingsFormDTO.appNotification();</span>
-<span class="nc" id="L41">    }</span>
+<span class="fc" id="L42">        this.smsNotification = userSettingsFormDTO.smsNotification();</span>
+<span class="fc" id="L43">        this.emailNotification = userSettingsFormDTO.emailNotification();</span>
+<span class="fc" id="L44">        this.appNotification = userSettingsFormDTO.appNotification();</span>
+<span class="fc" id="L45">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

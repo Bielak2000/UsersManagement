@@ -19,19 +19,21 @@ import java.util.UUID;
                       @NotEmpty(message = &quot;Email can't be emtpy&quot;) String email,
                       @Nullable String phoneNumber,
                       @Nullable CompanyDTO companyDTO,
-                      @Nullable AddressFormDTO addressDTO) {
+                      @Nullable AddressFormDTO addressDTO,
+                      @NotNull UserSettingsFormDTO userSettingsFormDTO) {
     public static UserDTO create(User user) {
-<span class="fc" id="L24">        return UserDTO.builder()</span>
-<span class="fc" id="L25">                .id(user.getId())</span>
-<span class="fc" id="L26">                .createdAt(user.getCreatedAt())</span>
-<span class="fc" id="L27">                .lastActivityAt(user.getLastActivityAt())</span>
-<span class="fc" id="L28">                .name(user.getName())</span>
-<span class="fc" id="L29">                .surname(user.getSurname())</span>
-<span class="fc" id="L30">                .email(user.getEmail())</span>
-<span class="fc" id="L31">                .phoneNumber(user.getPhoneNumber())</span>
-<span class="fc" id="L32">                .companyDTO(CompanyDTO.create(user.getCompany()))</span>
-<span class="fc" id="L33">                .addressDTO(AddressFormDTO.create(user.getAddress()))</span>
-<span class="fc" id="L34">                .build();</span>
+<span class="fc" id="L25">        return UserDTO.builder()</span>
+<span class="fc" id="L26">                .id(user.getId())</span>
+<span class="fc" id="L27">                .createdAt(user.getCreatedAt())</span>
+<span class="fc" id="L28">                .lastActivityAt(user.getLastActivityAt())</span>
+<span class="fc" id="L29">                .name(user.getName())</span>
+<span class="fc" id="L30">                .surname(user.getSurname())</span>
+<span class="fc" id="L31">                .email(user.getEmail())</span>
+<span class="fc" id="L32">                .phoneNumber(user.getPhoneNumber())</span>
+<span class="fc" id="L33">                .companyDTO(CompanyDTO.create(user.getCompany()))</span>
+<span class="fc" id="L34">                .addressDTO(AddressFormDTO.create(user.getAddress()))</span>
+<span class="fc" id="L35">                .userSettingsFormDTO(UserSettingsFormDTO.create(user.getUserSettings()))</span>
+<span class="fc" id="L36">                .build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

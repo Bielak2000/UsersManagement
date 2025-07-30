@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: users.management.service.CompanyServiceTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.196 s -- in users.management.service.CompanyServiceTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.109 s -- in users.management.service.CompanyServiceTest

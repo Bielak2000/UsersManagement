@@ -3,9 +3,11 @@
 
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,34 +39,38 @@ public class User extends BaseEntity {
     @Setter
     private LocalDateTime lastActivityAt;
     @ManyToOne
-    @JoinColumn(name = &quot;address_id&quot;, nullable = false)
+    @JoinColumn(name = &quot;address_id&quot;)
     private Address address;
     @ManyToOne
-    @JoinColumn(name = &quot;company_id&quot;, nullable = false)
+    @JoinColumn(name = &quot;company_id&quot;)
     private Company company;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;users_settings_id&quot;, referencedColumnName = &quot;id&quot;)
+    private UserSettings userSettings;
 
     public User(UserFormDTO userFormDTO, String password, Address address, Company company) {
-<span class="fc" id="L47">        super(UUID.randomUUID());</span>
-<span class="fc" id="L48">        this.lastActivityAt = LocalDateTime.now();</span>
-<span class="fc" id="L49">        this.name = userFormDTO.name();</span>
-<span class="fc" id="L50">        this.role = userFormDTO.role();</span>
-<span class="fc" id="L51">        this.password = password;</span>
-<span class="fc" id="L52">        this.surname = userFormDTO.surname();</span>
-<span class="fc" id="L53">        this.email = userFormDTO.email();</span>
-<span class="fc" id="L54">        this.phoneNumber = userFormDTO.phoneNumber();</span>
-<span class="fc" id="L55">        this.address = address;</span>
-<span class="fc" id="L56">        this.company = company;</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L52">        super(UUID.randomUUID());</span>
+<span class="fc" id="L53">        this.lastActivityAt = LocalDateTime.now();</span>
+<span class="fc" id="L54">        this.name = userFormDTO.name();</span>
+<span class="fc" id="L55">        this.role = userFormDTO.role();</span>
+<span class="fc" id="L56">        this.password = password;</span>
+<span class="fc" id="L57">        this.surname = userFormDTO.surname();</span>
+<span class="fc" id="L58">        this.email = userFormDTO.email();</span>
+<span class="fc" id="L59">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+<span class="fc" id="L60">        this.address = address;</span>
+<span class="fc" id="L61">        this.company = company;</span>
+<span class="fc" id="L62">        this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);</span>
+<span class="fc" id="L63">    }</span>
 
     public void update(UserFormDTO userFormDTO, Address address, Company company) {
-<span class="fc" id="L60">        this.name = userFormDTO.name();</span>
-<span class="fc" id="L61">        this.role = userFormDTO.role();</span>
-<span class="fc" id="L62">        this.surname = userFormDTO.surname();</span>
-<span class="fc" id="L63">        this.email = userFormDTO.email();</span>
-<span class="fc" id="L64">        this.phoneNumber = userFormDTO.phoneNumber();</span>
-<span class="fc" id="L65">        this.address = address;</span>
-<span class="fc" id="L66">        this.company = company;</span>
-<span class="fc" id="L67">    }</span>
+<span class="fc" id="L66">        this.name = userFormDTO.name();</span>
+<span class="fc" id="L67">        this.role = userFormDTO.role();</span>
+<span class="fc" id="L68">        this.surname = userFormDTO.surname();</span>
+<span class="fc" id="L69">        this.email = userFormDTO.email();</span>
+<span class="fc" id="L70">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+<span class="fc" id="L71">        this.address = address;</span>
+<span class="fc" id="L72">        this.company = company;</span>
+<span class="fc" id="L73">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
