@@ -5,6 +5,7 @@
 /home/kacperbielak/uczelnia/users_management/src/main/java/users/management/dto/CompanyFormDTO.java
 /home/kacperbielak/uczelnia/users_management/src/main/java/users/management/dto/UserDTO.java
 /home/kacperbielak/uczelnia/users_management/src/main/java/users/management/dto/UserFormDTO.java
+/home/kacperbielak/uczelnia/users_management/src/main/java/users/management/dto/UserLoginDTO.java
 /home/kacperbielak/uczelnia/users_management/src/main/java/users/management/dto/UserSettingsFormDTO.java
 /home/kacperbielak/uczelnia/users_management/src/main/java/users/management/entity/Address.java
 /home/kacperbielak/uczelnia/users_management/src/main/java/users/management/entity/BaseEntity.java

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import users.management.dto.AddressFormDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
+import users.management.dto.UserLoginDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
 import users.management.entity.User;
@@ -54,18 +55,24 @@ public class UserService {
     }
 
     @Transactional
-    public void updateLastActivityUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email %s doesn't exists.", email)));
+    public void updateLastActivityUser(UUID userID) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with ID %s doesn't exists.", userID)));
         user.setLastActivityAt(LocalDateTime.now());
         userRepository.save(user);
     }
 
     @Transactional
-    public void update(String email, UserFormDTO userFormDTO, Company company) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email %s doesn't exists.", email)));
+    public void update(UUID userID, UserFormDTO userFormDTO, Company company) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with ID %s doesn't exists.", userID)));
         Address address = updateUserAddress(user, userFormDTO.addressFormDTO());
         user.update(userFormDTO, address, company);
         userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserLoginDTO getUserLoginDataByUserID(UUID userID) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with ID %s doesn't exists.", userID)));
+        return UserLoginDTO.create(user);
     }
 
     private Address updateUserAddress(User user, AddressFormDTO addressFormDTO) {

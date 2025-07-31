@@ -1,5 +1,6 @@
 package users.management.dto;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import users.management.entity.Company;
 
@@ -7,7 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record CompanyDTO(@NotEmpty(message = "Name can't be empty") String name,
                          @NotEmpty(message = "TaxIdentifiaction password can't be empty") String taxIdentifiaction,
                          @NotEmpty(message = "PhoneNumber can't be empty") String phoneNumber,
