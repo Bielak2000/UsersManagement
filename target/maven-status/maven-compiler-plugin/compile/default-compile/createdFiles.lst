@@ -4,12 +4,14 @@ users/management/dto/UserFormDTO.class
 users/management/configuration/UsersManagementConfiguration.class
 users/management/exception/BadRequestException.class
 users/management/service/UserService.class
+users/management/dto/UserLoginDTO$UserLoginDTOBuilder.class
 users/management/service/CompanyService.class
 users/management/dto/CompanyDTO.class
 users/management/entity/Address.class
 users/management/dto/UserDTO$UserDTOBuilder.class
 users/management/exception/NotFoundException.class
 users/management/repository/UserSettingsRepository.class
+users/management/dto/UserLoginDTO.class
 users/management/entity/UserSettings.class
 users/management/dto/AddressFormDTO$AddressFormDTOBuilder.class
 users/management/dto/UserSettingsFormDTO$UserSettingsFormDTOBuilder.class

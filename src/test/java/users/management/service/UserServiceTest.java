@@ -321,9 +321,7 @@ public class UserServiceTest {
         when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(true);
 
         // then
-        Assertions.assertAll(
-                () -> Assertions.assertDoesNotThrow(() -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
-        );
+        Assertions.assertDoesNotThrow(() -> userService.changePassword(UUID.randomUUID(), changePasswordDTO));
     }
 
     @Test
@@ -335,9 +333,7 @@ public class UserServiceTest {
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertAll(
-                () -> Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
-        );
+        Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO));
     }
 
     @Test
@@ -352,9 +348,7 @@ public class UserServiceTest {
         when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(true);
 
         // then
-        Assertions.assertAll(
-                () -> Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
-        );
+        Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO));
     }
 
     @Test
@@ -369,9 +363,7 @@ public class UserServiceTest {
         when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(false);
 
         // then
-        Assertions.assertAll(
-                () -> Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
-        );
+        Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO));
     }
 
 }

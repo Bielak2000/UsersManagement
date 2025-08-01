@@ -1,10 +1,10 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 UsersManagement,users.management.entity,Company,0,48,0,0,0,14,0,2,0,2
-UsersManagement,users.management.entity,User,0,71,0,0,0,20,0,2,0,2
+UsersManagement,users.management.entity,User,4,74,0,0,2,21,1,2,1,2
 UsersManagement,users.management.entity,Address,0,54,0,0,0,15,0,2,0,2
 UsersManagement,users.management.entity,UserSettings,0,50,3,9,0,10,3,5,0,2
 UsersManagement,users.management.entity,BaseEntity,3,15,0,0,2,6,1,1,1,1
-UsersManagement,users.management.service,UserService,0,232,0,12,0,32,0,18,0,12
+UsersManagement,users.management.service,UserService,0,256,0,12,0,34,0,20,0,14
 UsersManagement,users.management.service,CompanyService,0,80,0,0,0,10,0,6,0,6
 UsersManagement,users.management.service,UserSettingsService,0,12,0,0,0,4,0,1,0,1
 UsersManagement,users.management.service,AddressService,0,33,0,0,0,4,0,3,0,3
@@ -13,9 +13,10 @@ UsersManagement,users.management.exception,NotFoundException,0,14,0,0,0,5,0,2,0,
 UsersManagement,users.management.exception,BadRequestException,0,14,0,0,0,5,0,2,0,2
 UsersManagement,users.management.dto,UserSettingsFormDTO,0,24,0,0,0,6,0,2,0,2
 UsersManagement,users.management.dto,CompanyDTO,1,40,1,1,0,9,1,2,0,2
-UsersManagement,users.management.dto,UserDTO,0,69,0,0,0,13,0,2,0,2
+UsersManagement,users.management.dto,UserLoginDTO,0,36,0,0,0,8,0,2,0,2
+UsersManagement,users.management.dto,UserDTO,0,75,0,0,0,14,0,2,0,2
 UsersManagement,users.management.dto,ChangePasswordDTO,0,12,0,0,0,1,0,1,0,1
 UsersManagement,users.management.dto,UserFormDTO,0,33,0,0,0,1,0,1,0,1
 UsersManagement,users.management.dto,AddressFormDTO,1,48,1,1,0,9,1,2,0,2
 UsersManagement,users.management.dto,CompanyFormDTO,0,18,0,0,0,1,0,1,0,1
-UsersManagement,users.management,UsersManagementFacade,0,114,0,8,0,26,0,15,0,11
+UsersManagement,users.management,UsersManagementFacade,0,119,0,8,0,27,0,16,0,12

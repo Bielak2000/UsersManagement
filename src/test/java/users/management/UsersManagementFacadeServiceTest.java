@@ -248,9 +248,7 @@ public class UsersManagementFacadeServiceTest {
         doNothing().when(userService).changePassword(any(UUID.class), any(ChangePasswordDTO.class));
 
         // then
-        Assertions.assertAll(
-                () -> Assertions.assertDoesNotThrow(() -> usersManagementFacade.changeUserPassword(UUID.randomUUID(), changePasswordDTO))
-        );
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.changeUserPassword(UUID.randomUUID(), changePasswordDTO));
     }
 
 }
