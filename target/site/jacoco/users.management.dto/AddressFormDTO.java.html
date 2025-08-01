@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddressFormDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management.dto</a> &gt; <span class="el_source">AddressFormDTO.java</span></div><h1>AddressFormDTO.java</h1><pre class="source lang-java linenums">package users.management.dto;
 
 import jakarta.annotation.Nullable;
+import lombok.AccessLevel;
 import lombok.Builder;
 import users.management.entity.Address;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.UUID;
 
-@Builder
-<span class="fc" id="L11">public record AddressFormDTO(@Nullable UUID addressID,</span>
+@Builder(access = AccessLevel.PRIVATE)
+<span class="fc" id="L12">public record AddressFormDTO(@Nullable UUID addressID,</span>
                              @NotEmpty(message = &quot;Town can't be empty&quot;) String town,
                              @NotEmpty(message = &quot;PostalCode can't be empty&quot;) String postalCode,
                              @NotEmpty(message = &quot;HouseNumber can't be empty&quot;) String houseNumber,
@@ -17,14 +18,14 @@ import java.util.UUID;
                              @NotEmpty(message = &quot;Street can't be empty&quot;) String street) {
 
     public static AddressFormDTO create(Address address) {
-<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        return address != null ? AddressFormDTO.builder()</span>
-<span class="fc" id="L21">                .town(address.getTown())</span>
-<span class="fc" id="L22">                .postalCode(address.getPostalCode())</span>
-<span class="fc" id="L23">                .houseNumber(address.getHouseNumber())</span>
-<span class="fc" id="L24">                .apartmentNumber(address.getApartmentNumber())</span>
-<span class="fc" id="L25">                .city(address.getCity())</span>
-<span class="fc" id="L26">                .street(address.getStreet())</span>
-<span class="pc" id="L27">                .build() : null;</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        return address != null ? AddressFormDTO.builder()</span>
+<span class="fc" id="L22">                .town(address.getTown())</span>
+<span class="fc" id="L23">                .postalCode(address.getPostalCode())</span>
+<span class="fc" id="L24">                .houseNumber(address.getHouseNumber())</span>
+<span class="fc" id="L25">                .apartmentNumber(address.getApartmentNumber())</span>
+<span class="fc" id="L26">                .city(address.getCity())</span>
+<span class="fc" id="L27">                .street(address.getStreet())</span>
+<span class="pc" id="L28">                .build() : null;</span>
     }
 
 }

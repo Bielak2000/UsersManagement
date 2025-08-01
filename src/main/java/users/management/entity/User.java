@@ -38,6 +38,7 @@ public class User extends BaseEntity {
     private String password;
     @Setter
     private LocalDateTime lastActivityAt;
+    private boolean enabled;
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
@@ -60,6 +61,7 @@ public class User extends BaseEntity {
         this.address = address;
         this.company = company;
         this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);
+        this.enabled = false;
     }
 
     public void update(UserFormDTO userFormDTO, Address address, Company company) {
@@ -70,6 +72,10 @@ public class User extends BaseEntity {
         this.phoneNumber = userFormDTO.phoneNumber();
         this.address = address;
         this.company = company;
+    }
+
+    public void enabledUser() {
+        this.enabled = true;
     }
 
 }

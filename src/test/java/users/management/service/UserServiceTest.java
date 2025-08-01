@@ -181,19 +181,19 @@ public class UserServiceTest {
         User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
 
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.updateLastActivityUser(user.getEmail()));
+        Assertions.assertDoesNotThrow(() -> userService.updateLastActivityUser(user.getId()));
     }
 
     @Test
     void updateLastActivityUserShouldThrowNotFoundException() {
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(NotFoundException.class, () -> userService.updateLastActivityUser(USER_FORM_DTO_LIST.get(0).email()));
+        Assertions.assertThrows(NotFoundException.class, () -> userService.updateLastActivityUser(UUID.randomUUID()));
     }
 
     @Test
@@ -203,11 +203,11 @@ public class UserServiceTest {
         User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), new Address(ADDRESS_FORM_DTO_LIST.get(1)), COMPANY_LIST.get(1));
 
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.update(USER_FORM_DTO_LIST.get(0).email(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
+        Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
     }
 
     @Test
@@ -218,11 +218,11 @@ public class UserServiceTest {
         UserFormDTO userFormDTOWithoutAddress = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", COMPANY_LIST.get(0).getId(), null, null);
 
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.update(USER_FORM_DTO_LIST.get(0).email(), userFormDTOWithoutAddress, COMPANY_LIST.get(0)));
+        Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), userFormDTOWithoutAddress, COMPANY_LIST.get(0)));
     }
 
     @Test
@@ -232,20 +232,20 @@ public class UserServiceTest {
         User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(1));
 
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.update(USER_FORM_DTO_LIST.get(0).email(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
+        Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
     }
 
     @Test
     void updateUserShouldThrowNotFoundException() {
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(NotFoundException.class, () -> userService.update(USER_FORM_DTO_LIST.get(0).email(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
+        Assertions.assertThrows(NotFoundException.class, () -> userService.update(UUID.randomUUID(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
     }
 
     @Test
@@ -278,6 +278,35 @@ public class UserServiceTest {
 
         // then
         Assertions.assertThrows(NotFoundException.class, () -> userService.getUserByEmail("email1"));
+    }
+
+    @Test
+    void getUserDataLoginByUserIDShouldReturn() {
+        // given
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
+        UUID userID = user.getId();
+
+        // when
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> userService.getUserLoginDataByUserID(userID)),
+                () -> Assertions.assertEquals(userService.getUserLoginDataByUserID(userID).id(), userID),
+                () -> Assertions.assertEquals(userService.getUserLoginDataByUserID(userID).role(), user.getRole()),
+                () -> Assertions.assertEquals(userService.getUserLoginDataByUserID(userID).enabled(), user.isEnabled()),
+                () -> Assertions.assertEquals(userService.getUserLoginDataByUserID(userID).password(), user.getPassword()),
+                () -> Assertions.assertEquals(userService.getUserLoginDataByUserID(userID).email(), user.getEmail())
+        );
+    }
+
+    @Test
+    void getUserDataLoginByUserIDShouldThrowNotFoundException() {
+        // when
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+        // then
+        Assertions.assertThrows(NotFoundException.class, () -> userService.getUserLoginDataByUserID(UUID.randomUUID()));
     }
 
     @Test

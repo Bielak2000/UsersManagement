@@ -1,9 +1,10 @@
 package users.management.dto;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import users.management.entity.UserSettings;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record UserSettingsFormDTO(boolean smsNotification,
                                   boolean appNotification,
                                   boolean emailNotification) {

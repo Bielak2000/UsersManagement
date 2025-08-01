@@ -6,6 +6,7 @@ import users.management.dto.CompanyDTO;
 import users.management.dto.CompanyFormDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
+import users.management.dto.UserLoginDTO;
 import users.management.dto.UserSettingsFormDTO;
 import users.management.dto.ChangePasswordDTO;
 import users.management.entity.Address;
@@ -42,13 +43,13 @@ public class UsersManagementFacade {
         companyService.update(companyID, companyFormDTO);
     }
 
-    public void updateUser(String email, UserFormDTO userFormDTO) {
+    public void updateUser(UUID userID, UserFormDTO userFormDTO) {
         Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;
-        userService.update(email, userFormDTO, company);
+        userService.update(userID, userFormDTO, company);
     }
 
-    public void updateLastActivityUser(String email) {
-        userService.updateLastActivityUser(email);
+    public void updateLastActivityUser(UUID userID) {
+        userService.updateLastActivityUser(userID);
     }
 
     public void updateUserSettings(String email, UserSettingsFormDTO userSettingsFormDTO) {
@@ -66,6 +67,10 @@ public class UsersManagementFacade {
 
     public List<UserDTO> getUsersByCompanyId(UUID companyId) {
         return userService.getUsersByCompanyId(companyId);
+    }
+
+    public UserLoginDTO getUserLoginData(UUID userID) {
+        return userService.getUserLoginDataByUserID(userID);
     }
 
     public void changeUserPassword(UUID userID, ChangePasswordDTO changePasswordDTO) {

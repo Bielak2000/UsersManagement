@@ -55,6 +55,7 @@ CREATE TABLE users.users
     modified_at      DATE         NOT NULL,
     last_activity_at DATE         NOT NULL,
     deleted          boolean      NOT NULL,
+    enabled          boolean      NOT NULL,
     CONSTRAINT fk_company FOREIGN KEY (company_id) REFERENCES users.company (id),
     CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES users.address (id),
     CONSTRAINT fk_user_settings FOREIGN KEY (user_settings_id) REFERENCES users.user_settings (id)

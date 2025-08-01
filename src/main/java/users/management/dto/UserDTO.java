@@ -2,6 +2,7 @@ package users.management.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
+import lombok.AccessLevel;
 import lombok.Builder;
 import users.management.entity.User;
 
@@ -10,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public record UserDTO(@NotNull UUID id,
                       @NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createdAt,
                       @NotNull @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime lastActivityAt,
@@ -18,6 +19,7 @@ public record UserDTO(@NotNull UUID id,
                       @NotEmpty(message = "Surname can't be empty") String surname,
                       @NotEmpty(message = "Email can't be emtpy") String email,
                       @Nullable String phoneNumber,
+                      @NotNull boolean enabled,
                       @Nullable CompanyDTO companyDTO,
                       @Nullable AddressFormDTO addressDTO,
                       @NotNull UserSettingsFormDTO userSettingsFormDTO) {
@@ -30,6 +32,7 @@ public record UserDTO(@NotNull UUID id,
                 .surname(user.getSurname())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
+                .enabled(user.isEnabled())
                 .companyDTO(CompanyDTO.create(user.getCompany()))
                 .addressDTO(AddressFormDTO.create(user.getAddress()))
                 .userSettingsFormDTO(UserSettingsFormDTO.create(user.getUserSettings()))

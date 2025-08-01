@@ -12,6 +12,7 @@ import users.management.dto.CompanyDTO;
 import users.management.dto.CompanyFormDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
+import users.management.dto.UserLoginDTO;
 import users.management.dto.UserSettingsFormDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
@@ -128,7 +129,7 @@ public class UsersManagementFacadeServiceTest {
         when(companyService.getById(any(UUID.class))).thenReturn(company);
 
         // then
-        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(USER_FORM_DTO.email(), USER_FORM_DTO));
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(UUID.randomUUID(), USER_FORM_DTO));
     }
 
     @Test
@@ -137,19 +138,16 @@ public class UsersManagementFacadeServiceTest {
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", null, ADDRESS_FORM_DTO, USER_SETTINGS_FORM_DTO);
 
         // then
-        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(userFormDTO.email(), userFormDTO));
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(UUID.randomUUID(), userFormDTO));
     }
 
     @Test
     public void updateLastActivityUserShouldNotThrow() {
-        // given
-        String email = "email";
-
         // when
-        doNothing().when(userService).updateLastActivityUser(any(String.class));
+        doNothing().when(userService).updateLastActivityUser(any(UUID.class));
 
         // then
-        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateLastActivityUser(email));
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateLastActivityUser(UUID.randomUUID()));
     }
 
     @Test
@@ -187,7 +185,7 @@ public class UsersManagementFacadeServiceTest {
     public void getUsersShouldReturn() {
         // given
         CompanyDTO companyDTO = new CompanyDTO("name", "tax", "123123123", "email", ADDRESS_FORM_DTO);
-        UserDTO userDTO = new UserDTO(UUID.randomUUID(), LocalDateTime.now().minusDays(1), LocalDateTime.now(), "name", "surname", "email", "123123123",
+        UserDTO userDTO = new UserDTO(UUID.randomUUID(), LocalDateTime.now().minusDays(1), LocalDateTime.now(), "name", "surname", "email", "123123123", true,
                 companyDTO, ADDRESS_FORM_DTO, USER_SETTINGS_FORM_DTO);
 
         // when
@@ -206,7 +204,7 @@ public class UsersManagementFacadeServiceTest {
     public void getUsersByCompanyIdShouldReturn() {
         // given
         CompanyDTO companyDTO = new CompanyDTO("name", "tax", "123123123", "email", ADDRESS_FORM_DTO);
-        UserDTO userDTO = new UserDTO(UUID.randomUUID(), LocalDateTime.now().minusDays(1), LocalDateTime.now(), "name", "surname", "email", "123123123",
+        UserDTO userDTO = new UserDTO(UUID.randomUUID(), LocalDateTime.now().minusDays(1), LocalDateTime.now(), "name", "surname", "email", "123123123", true,
                 companyDTO, ADDRESS_FORM_DTO, USER_SETTINGS_FORM_DTO);
 
         // when
@@ -218,6 +216,26 @@ public class UsersManagementFacadeServiceTest {
                 () -> Assertions.assertEquals(usersManagementFacade.getUsersByCompanyId(UUID.randomUUID()).get(0).name(), userDTO.name()),
                 () -> Assertions.assertEquals(usersManagementFacade.getUsersByCompanyId(UUID.randomUUID()).get(0).addressDTO().addressID(), userDTO.addressDTO().addressID()),
                 () -> Assertions.assertEquals(usersManagementFacade.getUsersByCompanyId(UUID.randomUUID()).get(0).companyDTO().name(), companyDTO.name())
+        );
+    }
+
+    @Test
+    void getUserDataLoginShouldReturn() {
+        // given
+        UUID userID = UUID.randomUUID();
+        UserLoginDTO userLoginDTO = new UserLoginDTO(userID, "email", "password", true, "role");
+
+        // when
+        when(userService.getUserLoginDataByUserID(any())).thenReturn(userLoginDTO);
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> usersManagementFacade.getUserLoginData(userID)),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserLoginData(userID).id(), userID),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserLoginData(userID).role(), userLoginDTO.role()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserLoginData(userID).enabled(), userLoginDTO.enabled()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserLoginData(userID).password(), userLoginDTO.password()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserLoginData(userID).email(), userLoginDTO.email())
         );
     }
 
