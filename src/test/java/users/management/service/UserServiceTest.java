@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import users.management.dto.AddressFormDTO;
+import users.management.dto.ChangePasswordDTO;
 import users.management.dto.CompanyFormDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserSettingsFormDTO;
@@ -67,6 +68,8 @@ public class UserServiceTest {
             new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", COMPANY_LIST.get(1).getId(), ADDRESS_FORM_DTO_LIST.get(0), USER_SETTINGS_FORM_DTO_LIST.get(1)),
             new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", COMPANY_LIST.get(2).getId(), ADDRESS_FORM_DTO_LIST.get(0), USER_SETTINGS_FORM_DTO_LIST.get(2))
     );
+
+    private static final ChangePasswordDTO CHANGE_PASSWORD_DTO = new ChangePasswordDTO("oldPass", "newPass", "new Pass");
 
     @Test
     void getUsersShouldReturn() {
@@ -275,6 +278,71 @@ public class UserServiceTest {
 
         // then
         Assertions.assertThrows(NotFoundException.class, () -> userService.getUserByEmail("email1"));
+    }
+
+    @Test
+    public void changePasswordShouldChange() {
+        // given
+        Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("password", "newPass", "newPass");
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(true);
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
+        );
+    }
+
+    @Test
+    public void changePasswordForNotExistsUserShouldThrowBadRequestException() {
+        // given
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("password", "newPass", "newPass");
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
+        );
+    }
+
+    @Test
+    public void changePasswordWithDifferentPasswordShouldThrowBadRequestException() {
+        // given
+        Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("password", "newPass", "newPass1");
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(true);
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
+        );
+    }
+
+    @Test
+    public void changePasswordWithBadPasswordShouldThrowBadRequestException() {
+        // given
+        Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("password1", "newPass", "newPass");
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(any(String.class), any(String.class))).thenReturn(false);
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO))
+        );
     }
 
 }

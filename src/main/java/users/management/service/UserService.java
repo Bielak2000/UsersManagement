@@ -68,6 +68,21 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void changePassword(UUID userID, users.management.dto.ChangePasswordDTO changePasswordDTO) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new BadRequestException(String.format("User with id %s already exists.", userID)));
+        if (passwordEncoder.matches(changePasswordDTO.oldPassword(), user.getPassword())) {
+            if (changePasswordDTO.newPassword().equals(changePasswordDTO.confirmationPassword())) {
+                user.setPassword(passwordEncoder.encode(changePasswordDTO.newPassword()));
+                userRepository.save(user);
+            } else {
+                throw new BadRequestException("The password are not the same.");
+            }
+        } else {
+            throw new BadRequestException("The wrong old password.");
+        }
+    }
+
     private Address updateUserAddress(User user, AddressFormDTO addressFormDTO) {
         if (addressFormDTO != null) {
             if (user.getAddress() == null) return new Address(addressFormDTO);

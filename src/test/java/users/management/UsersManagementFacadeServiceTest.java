@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import users.management.dto.AddressFormDTO;
+import users.management.dto.ChangePasswordDTO;
 import users.management.dto.CompanyDTO;
 import users.management.dto.CompanyFormDTO;
 import users.management.dto.UserDTO;
@@ -217,6 +218,20 @@ public class UsersManagementFacadeServiceTest {
                 () -> Assertions.assertEquals(usersManagementFacade.getUsersByCompanyId(UUID.randomUUID()).get(0).name(), userDTO.name()),
                 () -> Assertions.assertEquals(usersManagementFacade.getUsersByCompanyId(UUID.randomUUID()).get(0).addressDTO().addressID(), userDTO.addressDTO().addressID()),
                 () -> Assertions.assertEquals(usersManagementFacade.getUsersByCompanyId(UUID.randomUUID()).get(0).companyDTO().name(), companyDTO.name())
+        );
+    }
+
+    @Test
+    public void changeUserPasswordShouldChange() {
+        // given
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("oldPass", "newPass", "newPass");
+
+        // when
+        doNothing().when(userService).changePassword(any(UUID.class), any(ChangePasswordDTO.class));
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> usersManagementFacade.changeUserPassword(UUID.randomUUID(), changePasswordDTO))
         );
     }
 

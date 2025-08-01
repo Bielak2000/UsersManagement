@@ -7,6 +7,7 @@ import users.management.dto.CompanyFormDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserSettingsFormDTO;
+import users.management.dto.ChangePasswordDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
 import users.management.entity.User;
@@ -65,6 +66,10 @@ public class UsersManagementFacade {
 
     public List<UserDTO> getUsersByCompanyId(UUID companyId) {
         return userService.getUsersByCompanyId(companyId);
+    }
+
+    public void changeUserPassword(UUID userID, ChangePasswordDTO changePasswordDTO) {
+        userService.changePassword(userID, changePasswordDTO);
     }
 
     private Address createAddressForUser(AddressFormDTO addressFormDTO) {
