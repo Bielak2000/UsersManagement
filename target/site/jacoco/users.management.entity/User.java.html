@@ -38,6 +38,7 @@ public class User extends BaseEntity {
     private String password;
     @Setter
     private LocalDateTime lastActivityAt;
+    @Setter
     private boolean enabled;
     @ManyToOne
     @JoinColumn(name = &quot;address_id&quot;)
@@ -50,33 +51,33 @@ public class User extends BaseEntity {
     private UserSettings userSettings;
 
     public User(UserFormDTO userFormDTO, String password, Address address, Company company) {
-<span class="fc" id="L53">        super(UUID.randomUUID());</span>
-<span class="fc" id="L54">        this.lastActivityAt = LocalDateTime.now();</span>
-<span class="fc" id="L55">        this.name = userFormDTO.name();</span>
-<span class="fc" id="L56">        this.role = userFormDTO.role();</span>
-<span class="fc" id="L57">        this.password = password;</span>
-<span class="fc" id="L58">        this.surname = userFormDTO.surname();</span>
-<span class="fc" id="L59">        this.email = userFormDTO.email();</span>
-<span class="fc" id="L60">        this.phoneNumber = userFormDTO.phoneNumber();</span>
-<span class="fc" id="L61">        this.address = address;</span>
-<span class="fc" id="L62">        this.company = company;</span>
-<span class="fc" id="L63">        this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);</span>
-<span class="fc" id="L64">        this.enabled = false;</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L54">        super(UUID.randomUUID());</span>
+<span class="fc" id="L55">        this.lastActivityAt = LocalDateTime.now();</span>
+<span class="fc" id="L56">        this.name = userFormDTO.name();</span>
+<span class="fc" id="L57">        this.role = userFormDTO.role();</span>
+<span class="fc" id="L58">        this.password = password;</span>
+<span class="fc" id="L59">        this.surname = userFormDTO.surname();</span>
+<span class="fc" id="L60">        this.email = userFormDTO.email();</span>
+<span class="fc" id="L61">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+<span class="fc" id="L62">        this.address = address;</span>
+<span class="fc" id="L63">        this.company = company;</span>
+<span class="fc" id="L64">        this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);</span>
+<span class="fc" id="L65">        this.enabled = false;</span>
+<span class="fc" id="L66">    }</span>
 
     public void update(UserFormDTO userFormDTO, Address address, Company company) {
-<span class="fc" id="L68">        this.name = userFormDTO.name();</span>
-<span class="fc" id="L69">        this.role = userFormDTO.role();</span>
-<span class="fc" id="L70">        this.surname = userFormDTO.surname();</span>
-<span class="fc" id="L71">        this.email = userFormDTO.email();</span>
-<span class="fc" id="L72">        this.phoneNumber = userFormDTO.phoneNumber();</span>
-<span class="fc" id="L73">        this.address = address;</span>
-<span class="fc" id="L74">        this.company = company;</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L69">        this.name = userFormDTO.name();</span>
+<span class="fc" id="L70">        this.role = userFormDTO.role();</span>
+<span class="fc" id="L71">        this.surname = userFormDTO.surname();</span>
+<span class="fc" id="L72">        this.email = userFormDTO.email();</span>
+<span class="fc" id="L73">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+<span class="fc" id="L74">        this.address = address;</span>
+<span class="fc" id="L75">        this.company = company;</span>
+<span class="fc" id="L76">    }</span>
 
     public void enabledUser() {
-<span class="nc" id="L78">        this.enabled = true;</span>
-<span class="nc" id="L79">    }</span>
+<span class="nc" id="L79">        this.enabled = true;</span>
+<span class="nc" id="L80">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

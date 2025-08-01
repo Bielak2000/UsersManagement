@@ -3,3 +3,4 @@
 /home/kacperbielak/Projects/users_management/src/test/java/users/management/service/CompanyServiceTest.java
 /home/kacperbielak/Projects/users_management/src/test/java/users/management/service/UserServiceTest.java
 /home/kacperbielak/Projects/users_management/src/test/java/users/management/service/UserSettingsServiceTest.java
+/home/kacperbielak/Projects/users_management/src/test/java/users/management/service/VerificationTokenServiceTest.java

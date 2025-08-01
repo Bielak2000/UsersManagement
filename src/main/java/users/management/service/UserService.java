@@ -35,20 +35,27 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email %s doesn't exists.", email)));
+    public User getUserById(UUID userID) {
+        return userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with id %s doesn't exists.", userID)));
     }
 
     @Transactional
-    public void create(UserFormDTO userFormDTO, Address address, Company company) {
+    public void enableUser(UUID userID) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with id %s doesn't exists.", userID)));
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public User create(UserFormDTO userFormDTO, Address address, Company company) {
         if (userFormDTO.password().equals(userFormDTO.confirmationPassword())) {
             if (userRepository.findByEmail(userFormDTO.email()).isEmpty()) {
                 User user = new User(userFormDTO, passwordEncoder.encode(userFormDTO.password()), address, company);
                 userRepository.save(user);
+                return user;
             } else {
                 throw new BadRequestException(String.format("User with email %s already exists.", userFormDTO.email()));
             }
-
         } else {
             throw new BadRequestException("Passwords are different.");
         }

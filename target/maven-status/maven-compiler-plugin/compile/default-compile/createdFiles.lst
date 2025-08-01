@@ -2,6 +2,7 @@ users/management/repository/UserRepository.class
 users/management/dto/UserSettingsFormDTO.class
 users/management/dto/UserFormDTO.class
 users/management/configuration/UsersManagementConfiguration.class
+users/management/service/VerificationTokenService.class
 users/management/exception/BadRequestException.class
 users/management/service/UserService.class
 users/management/dto/UserLoginDTO$UserLoginDTOBuilder.class
@@ -23,8 +24,11 @@ users/management/service/UserSettingsService.class
 users/management/entity/User.class
 users/management/dto/AddressFormDTO.class
 users/management/entity/Company.class
+users/management/entity/VerificationToken.class
+users/management/exception/UnauthorizedException.class
 users/management/dto/UserDTO.class
 users/management/entity/BaseEntity.class
 users/management/UsersManagementFacade.class
+users/management/repository/VerificationTokenRepository.class
 users/management/repository/CompanyRepository.class
 users/management/repository/AddressRepository.class

@@ -35,66 +35,73 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User getUserByEmail(String email) {
-<span class="fc" id="L39">        return userRepository.findByEmail(email).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with email %s doesn't exists.&quot;, email)));</span>
+    public User getUserById(UUID userID) {
+<span class="fc" id="L39">        return userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with id %s doesn't exists.&quot;, userID)));</span>
     }
 
     @Transactional
-    public void create(UserFormDTO userFormDTO, Address address, Company company) {
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (userFormDTO.password().equals(userFormDTO.confirmationPassword())) {</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">            if (userRepository.findByEmail(userFormDTO.email()).isEmpty()) {</span>
-<span class="fc" id="L46">                User user = new User(userFormDTO, passwordEncoder.encode(userFormDTO.password()), address, company);</span>
-<span class="fc" id="L47">                userRepository.save(user);</span>
-<span class="fc" id="L48">            } else {</span>
-<span class="fc" id="L49">                throw new BadRequestException(String.format(&quot;User with email %s already exists.&quot;, userFormDTO.email()));</span>
-            }
+    public void enableUser(UUID userID) {
+<span class="fc" id="L44">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with id %s doesn't exists.&quot;, userID)));</span>
+<span class="fc" id="L45">        user.setEnabled(true);</span>
+<span class="fc" id="L46">        userRepository.save(user);</span>
+<span class="fc" id="L47">    }</span>
 
+    @Transactional
+    public User create(UserFormDTO userFormDTO, Address address, Company company) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (userFormDTO.password().equals(userFormDTO.confirmationPassword())) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if (userRepository.findByEmail(userFormDTO.email()).isEmpty()) {</span>
+<span class="fc" id="L53">                User user = new User(userFormDTO, passwordEncoder.encode(userFormDTO.password()), address, company);</span>
+<span class="fc" id="L54">                userRepository.save(user);</span>
+<span class="fc" id="L55">                return user;</span>
+            } else {
+<span class="fc" id="L57">                throw new BadRequestException(String.format(&quot;User with email %s already exists.&quot;, userFormDTO.email()));</span>
+            }
         } else {
-<span class="fc" id="L53">            throw new BadRequestException(&quot;Passwords are different.&quot;);</span>
+<span class="fc" id="L60">            throw new BadRequestException(&quot;Passwords are different.&quot;);</span>
         }
-<span class="fc" id="L55">    }</span>
+    }
 
     @Transactional
     public void updateLastActivityUser(UUID userID) {
-<span class="fc" id="L59">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with ID %s doesn't exists.&quot;, userID)));</span>
-<span class="fc" id="L60">        user.setLastActivityAt(LocalDateTime.now());</span>
-<span class="fc" id="L61">        userRepository.save(user);</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L66">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with ID %s doesn't exists.&quot;, userID)));</span>
+<span class="fc" id="L67">        user.setLastActivityAt(LocalDateTime.now());</span>
+<span class="fc" id="L68">        userRepository.save(user);</span>
+<span class="fc" id="L69">    }</span>
 
     @Transactional
     public void update(UUID userID, UserFormDTO userFormDTO, Company company) {
-<span class="fc" id="L66">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with ID %s doesn't exists.&quot;, userID)));</span>
-<span class="fc" id="L67">        Address address = updateUserAddress(user, userFormDTO.addressFormDTO());</span>
-<span class="fc" id="L68">        user.update(userFormDTO, address, company);</span>
-<span class="fc" id="L69">        userRepository.save(user);</span>
-<span class="fc" id="L70">    }</span>
+<span class="fc" id="L73">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with ID %s doesn't exists.&quot;, userID)));</span>
+<span class="fc" id="L74">        Address address = updateUserAddress(user, userFormDTO.addressFormDTO());</span>
+<span class="fc" id="L75">        user.update(userFormDTO, address, company);</span>
+<span class="fc" id="L76">        userRepository.save(user);</span>
+<span class="fc" id="L77">    }</span>
 
     @Transactional(readOnly = true)
     public UserLoginDTO getUserLoginDataByUserID(UUID userID) {
-<span class="fc" id="L74">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with ID %s doesn't exists.&quot;, userID)));</span>
-<span class="fc" id="L75">        return UserLoginDTO.create(user);</span>
+<span class="fc" id="L81">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new NotFoundException(String.format(&quot;User with ID %s doesn't exists.&quot;, userID)));</span>
+<span class="fc" id="L82">        return UserLoginDTO.create(user);</span>
     }
 
     @Transactional
     public void changePassword(UUID userID, users.management.dto.ChangePasswordDTO changePasswordDTO) {
-<span class="fc" id="L80">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new BadRequestException(String.format(&quot;User with id %s already exists.&quot;, userID)));</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (passwordEncoder.matches(changePasswordDTO.oldPassword(), user.getPassword())) {</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">            if (changePasswordDTO.newPassword().equals(changePasswordDTO.confirmationPassword())) {</span>
-<span class="fc" id="L83">                user.setPassword(passwordEncoder.encode(changePasswordDTO.newPassword()));</span>
-<span class="fc" id="L84">                userRepository.save(user);</span>
+<span class="fc" id="L87">        User user = userRepository.findById(userID).orElseThrow(() -&gt; new BadRequestException(String.format(&quot;User with id %s already exists.&quot;, userID)));</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (passwordEncoder.matches(changePasswordDTO.oldPassword(), user.getPassword())) {</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if (changePasswordDTO.newPassword().equals(changePasswordDTO.confirmationPassword())) {</span>
+<span class="fc" id="L90">                user.setPassword(passwordEncoder.encode(changePasswordDTO.newPassword()));</span>
+<span class="fc" id="L91">                userRepository.save(user);</span>
             } else {
-<span class="fc" id="L86">                throw new BadRequestException(&quot;The password are not the same.&quot;);</span>
+<span class="fc" id="L93">                throw new BadRequestException(&quot;The password are not the same.&quot;);</span>
             }
         } else {
-<span class="fc" id="L89">            throw new BadRequestException(&quot;The wrong old password.&quot;);</span>
+<span class="fc" id="L96">            throw new BadRequestException(&quot;The wrong old password.&quot;);</span>
         }
-<span class="fc" id="L91">    }</span>
+<span class="fc" id="L98">    }</span>
 
     private Address updateUserAddress(User user, AddressFormDTO addressFormDTO) {
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (addressFormDTO != null) {</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">            if (user.getAddress() == null) return new Address(addressFormDTO);</span>
-<span class="fc" id="L96">            else return user.getAddress().update(addressFormDTO);</span>
-<span class="fc" id="L97">        } else return null;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (addressFormDTO != null) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            if (user.getAddress() == null) return new Address(addressFormDTO);</span>
+<span class="fc" id="L103">            else return user.getAddress().update(addressFormDTO);</span>
+<span class="fc" id="L104">        } else return null;</span>
     }
 
 }

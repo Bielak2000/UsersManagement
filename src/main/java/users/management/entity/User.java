@@ -38,6 +38,7 @@ public class User extends BaseEntity {
     private String password;
     @Setter
     private LocalDateTime lastActivityAt;
+    @Setter
     private boolean enabled;
     @ManyToOne
     @JoinColumn(name = "address_id")

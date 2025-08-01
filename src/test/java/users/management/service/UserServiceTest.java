@@ -151,7 +151,12 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.create(USER_FORM_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0)));
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> userService.create(USER_FORM_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0))),
+                () -> Assertions.assertEquals(user.getEmail(), userService.create(USER_FORM_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0)).getEmail()),
+                () -> Assertions.assertEquals(user.getAddress().getCity(), userService.create(USER_FORM_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0)).getAddress().getCity()),
+                () -> Assertions.assertEquals(user.getCompany().getName(), userService.create(USER_FORM_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0)).getCompany().getName())
+        );
     }
 
     @Test
@@ -251,33 +256,33 @@ public class UserServiceTest {
     @Test
     void getUserByEmailShouldReturn() {
         // given
-        String email = USER_FORM_DTO_LIST.get(0).email();
         User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
+        UUID userID = user.getId();
 
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
         // then
         Assertions.assertAll(
-                () -> Assertions.assertDoesNotThrow(() -> userService.getUserByEmail(email)),
-                () -> Assertions.assertEquals(userService.getUserByEmail(email).getName(), USER_FORM_DTO_LIST.get(0).name()),
-                () -> Assertions.assertEquals(userService.getUserByEmail(email).getEmail(), USER_FORM_DTO_LIST.get(0).email()),
-                () -> Assertions.assertNotNull(userService.getUserByEmail(email).getAddress()),
-                () -> Assertions.assertEquals(userService.getUserByEmail(email).getAddress().getCity(), ADDRESS_FORM_DTO_LIST.get(0).city()),
-                () -> Assertions.assertNotNull(userService.getUserByEmail(email).getCompany()),
-                () -> Assertions.assertEquals(userService.getUserByEmail(email).getCompany().getName(), COMPANY_LIST.get(0).getName()),
-                () -> Assertions.assertNotNull(userService.getUserByEmail(email).getUserSettings()),
-                () -> Assertions.assertEquals(userService.getUserByEmail(email).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO_LIST.get(0).emailNotification())
+                () -> Assertions.assertDoesNotThrow(() -> userService.getUserById(userID)),
+                () -> Assertions.assertEquals(userService.getUserById(userID).getName(), USER_FORM_DTO_LIST.get(0).name()),
+                () -> Assertions.assertEquals(userService.getUserById(userID).getEmail(), USER_FORM_DTO_LIST.get(0).email()),
+                () -> Assertions.assertNotNull(userService.getUserById(userID).getAddress()),
+                () -> Assertions.assertEquals(userService.getUserById(userID).getAddress().getCity(), ADDRESS_FORM_DTO_LIST.get(0).city()),
+                () -> Assertions.assertNotNull(userService.getUserById(userID).getCompany()),
+                () -> Assertions.assertEquals(userService.getUserById(userID).getCompany().getName(), COMPANY_LIST.get(0).getName()),
+                () -> Assertions.assertNotNull(userService.getUserById(userID).getUserSettings()),
+                () -> Assertions.assertEquals(userService.getUserById(userID).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO_LIST.get(0).emailNotification())
         );
     }
 
     @Test
     void getUserByEmailShouldThrowNotFoundException() {
         // when
-        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(NotFoundException.class, () -> userService.getUserByEmail("email1"));
+        Assertions.assertThrows(NotFoundException.class, () -> userService.getUserById(UUID.randomUUID()));
     }
 
     @Test
@@ -364,6 +369,28 @@ public class UserServiceTest {
 
         // then
         Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO));
+    }
+
+    @Test
+    public void enableUserShouldEnable() {
+        // given
+        Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
+
+        // then
+        Assertions.assertDoesNotThrow(() -> userService.enableUser(UUID.randomUUID()));
+    }
+
+    @Test
+    public void enableUserShouldThrowNotFoundException() {
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        // then
+        Assertions.assertThrows(NotFoundException.class, () -> userService.enableUser(UUID.randomUUID()));
     }
 
 }

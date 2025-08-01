@@ -1,5 +1,6 @@
 package users.management.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,10 +12,12 @@ import users.management.repository.AddressRepository;
 import users.management.repository.CompanyRepository;
 import users.management.repository.UserRepository;
 import users.management.repository.UserSettingsRepository;
+import users.management.repository.VerificationTokenRepository;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
 import users.management.service.UserService;
 import users.management.service.UserSettingsService;
+import users.management.service.VerificationTokenService;
 
 @Configuration
 @ComponentScan(basePackages = "users.management")
@@ -43,8 +46,14 @@ public class UsersManagementConfiguration {
     }
 
     @Bean
-    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService) {
-        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService);
+    public VerificationTokenService verificationTokenService(@Value("${users.management.token.validity.hours}") int tokenValidityHours,
+                                                             VerificationTokenRepository verificationTokenRepository) {
+        return new VerificationTokenService(tokenValidityHours, verificationTokenRepository);
+    }
+
+    @Bean
+    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService, VerificationTokenService verificationTokenService) {
+        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService, verificationTokenService);
     }
 
 }

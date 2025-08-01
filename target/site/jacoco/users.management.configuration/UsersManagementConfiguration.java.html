@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsersManagementConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management.configuration</a> &gt; <span class="el_source">UsersManagementConfiguration.java</span></div><h1>UsersManagementConfiguration.java</h1><pre class="source lang-java linenums">package users.management.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,40 +12,48 @@ import users.management.repository.AddressRepository;
 import users.management.repository.CompanyRepository;
 import users.management.repository.UserRepository;
 import users.management.repository.UserSettingsRepository;
+import users.management.repository.VerificationTokenRepository;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
 import users.management.service.UserService;
 import users.management.service.UserSettingsService;
+import users.management.service.VerificationTokenService;
 
 @Configuration
 @ComponentScan(basePackages = &quot;users.management&quot;)
 @EntityScan(basePackages = &quot;users.management.entity&quot;)
 @EnableJpaRepositories(&quot;users.management.repository&quot;)
-<span class="nc" id="L23">public class UsersManagementConfiguration {</span>
+<span class="nc" id="L26">public class UsersManagementConfiguration {</span>
 
     @Bean
     public AddressService addressService(AddressRepository addressRepository) {
-<span class="nc" id="L27">        return new AddressService(addressRepository);</span>
+<span class="nc" id="L30">        return new AddressService(addressRepository);</span>
     }
 
     @Bean
     public CompanyService companyService(CompanyRepository companyRepository) {
-<span class="nc" id="L32">        return new CompanyService(companyRepository);</span>
+<span class="nc" id="L35">        return new CompanyService(companyRepository);</span>
     }
 
     @Bean
     public UserService userService(UserRepository userRepository) {
-<span class="nc" id="L37">        return new UserService(new BCryptPasswordEncoder(), userRepository);</span>
+<span class="nc" id="L40">        return new UserService(new BCryptPasswordEncoder(), userRepository);</span>
     }
 
     @Bean
     public UserSettingsService userSettingsService(UserSettingsRepository userSettingsRepository) {
-<span class="nc" id="L42">        return new UserSettingsService(userSettingsRepository);</span>
+<span class="nc" id="L45">        return new UserSettingsService(userSettingsRepository);</span>
     }
 
     @Bean
-    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService) {
-<span class="nc" id="L47">        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService);</span>
+    public VerificationTokenService verificationTokenService(@Value(&quot;${users.management.token.validity.hours}&quot;) int tokenValidityHours,
+                                                             VerificationTokenRepository verificationTokenRepository) {
+<span class="nc" id="L51">        return new VerificationTokenService(tokenValidityHours, verificationTokenRepository);</span>
+    }
+
+    @Bean
+    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService, VerificationTokenService verificationTokenService) {
+<span class="nc" id="L56">        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService, verificationTokenService);</span>
     }
 
 }

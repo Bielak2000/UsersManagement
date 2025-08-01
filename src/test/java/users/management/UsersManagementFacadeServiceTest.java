@@ -17,10 +17,12 @@ import users.management.dto.UserSettingsFormDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
 import users.management.entity.User;
+import users.management.exception.UnauthorizedException;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
 import users.management.service.UserService;
 import users.management.service.UserSettingsService;
+import users.management.service.VerificationTokenService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,6 +44,8 @@ public class UsersManagementFacadeServiceTest {
     CompanyService companyService;
     @Mock
     AddressService addressService;
+    @Mock
+    VerificationTokenService verificationTokenService;
     @InjectMocks
     UsersManagementFacade usersManagementFacade;
 
@@ -59,10 +63,14 @@ public class UsersManagementFacadeServiceTest {
 
     @Test
     public void createUserWithExistsAddressShouldNotThrow() {
+        // given
+        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
+
         // when
         when(companyService.getById(any())).thenReturn(new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
         when(addressService.getById(any(UUID.class))).thenReturn(new Address(ADDRESS_FORM_DTO));
-        doNothing().when(userService).create(any(UserFormDTO.class), any(Address.class), any(Company.class));
+        when(verificationTokenService.create(any())).thenReturn(UUID.randomUUID().toString());
+        when(userService.create(any(UserFormDTO.class), any(Address.class), any(Company.class))).thenReturn(user);
 
         // then
         Assertions.assertDoesNotThrow(() -> usersManagementFacade.createUser(USER_FORM_DTO));
@@ -73,10 +81,12 @@ public class UsersManagementFacadeServiceTest {
         // given
         AddressFormDTO addressFormDTO = new AddressFormDTO(null, "town", "postalCode", "houseNumber", "apartmentNumber", "city", "street");
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", UUID.randomUUID(), addressFormDTO, USER_SETTINGS_FORM_DTO);
+        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
 
         // when
         when(companyService.getById(any())).thenReturn(new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
-        doNothing().when(userService).create(any(UserFormDTO.class), any(Address.class), any(Company.class));
+        when(verificationTokenService.create(any())).thenReturn(UUID.randomUUID().toString());
+        when(userService.create(any(UserFormDTO.class), any(Address.class), any(Company.class))).thenReturn(user);
 
         // then
         Assertions.assertDoesNotThrow(() -> usersManagementFacade.createUser(userFormDTO));
@@ -86,10 +96,12 @@ public class UsersManagementFacadeServiceTest {
     public void createUserWithoutAddressShouldNotThrow() {
         // given
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", UUID.randomUUID(), null, USER_SETTINGS_FORM_DTO);
+        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
 
         // when
         when(companyService.getById(any())).thenReturn(new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
-        doNothing().when(userService).create(any(UserFormDTO.class), isNull(), any(Company.class));
+        when(verificationTokenService.create(any())).thenReturn(UUID.randomUUID().toString());
+        when(userService.create(any(UserFormDTO.class), isNull(), any(Company.class))).thenReturn(user);
 
         // then
         Assertions.assertDoesNotThrow(() -> usersManagementFacade.createUser(userFormDTO));
@@ -99,10 +111,11 @@ public class UsersManagementFacadeServiceTest {
     public void createUserWithoutCompanyShouldNotThrow() {
         // given
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", null, ADDRESS_FORM_DTO, USER_SETTINGS_FORM_DTO);
+        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
 
         // when
         when(addressService.getById(any(UUID.class))).thenReturn(new Address(ADDRESS_FORM_DTO));
-        doNothing().when(userService).create(any(UserFormDTO.class), any(Address.class), isNull());
+        when(userService.create(any(UserFormDTO.class), any(Address.class), isNull())).thenReturn(user);
 
         // then
         Assertions.assertDoesNotThrow(() -> usersManagementFacade.createUser(userFormDTO));
@@ -157,11 +170,11 @@ public class UsersManagementFacadeServiceTest {
         User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company);
 
         // when
-        when(userService.getUserByEmail(any(String.class))).thenReturn(user);
+        when(userService.getUserById(any(UUID.class))).thenReturn(user);
         doNothing().when(userSettingsService).updateUserSettings(user, USER_SETTINGS_FORM_DTO);
 
         // then
-        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUserSettings(user.getEmail(), USER_SETTINGS_FORM_DTO));
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUserSettings(user.getId(), USER_SETTINGS_FORM_DTO));
     }
 
     @Test
@@ -249,6 +262,25 @@ public class UsersManagementFacadeServiceTest {
 
         // then
         Assertions.assertDoesNotThrow(() -> usersManagementFacade.changeUserPassword(UUID.randomUUID(), changePasswordDTO));
+    }
+
+    @Test
+    public void activateUserShouldActivate() {
+        // when
+        when(verificationTokenService.isValidToken(any(), any())).thenReturn(true);
+        doNothing().when(userService).enableUser(any());
+
+        // then
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.activateUser(UUID.randomUUID(), "token"));
+    }
+
+    @Test
+    public void activateUserShouldThrowUnauthorizedException() {
+        // when
+        when(verificationTokenService.isValidToken(any(), any())).thenReturn(false);
+
+        // then
+        Assertions.assertThrows(UnauthorizedException.class, () -> usersManagementFacade.activateUser(UUID.randomUUID(), "token"));
     }
 
 }

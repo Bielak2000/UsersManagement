@@ -60,3 +60,16 @@ CREATE TABLE users.users
     CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES users.address (id),
     CONSTRAINT fk_user_settings FOREIGN KEY (user_settings_id) REFERENCES users.user_settings (id)
 );
+
+CREATE TABLE users.verification_token
+(
+    id          uuid PRIMARY KEY,
+    user_id     uuid         NOT NULL,
+    token       varchar(100) NOT NULL,
+    expiry_date DATE         NOT NULL,
+    created_at  DATE         NOT NULL,
+    modified_at DATE         NOT NULL,
+    deleted     boolean      NOT NULL,
+    enabled     boolean      NOT NULL,
+    CONSTRAINT fk_users_token FOREIGN KEY (user_id) REFERENCES users.users (id)
+);
