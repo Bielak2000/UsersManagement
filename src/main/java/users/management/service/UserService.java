@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import users.management.dto.AddressFormDTO;
+import users.management.dto.ResetPasswordDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserLoginDTO;
@@ -84,7 +85,7 @@ public class UserService {
 
     @Transactional
     public void changePassword(UUID userID, users.management.dto.ChangePasswordDTO changePasswordDTO) {
-        User user = userRepository.findById(userID).orElseThrow(() -> new BadRequestException(String.format("User with id %s already exists.", userID)));
+        User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with id %s not found.", userID)));
         if (passwordEncoder.matches(changePasswordDTO.oldPassword(), user.getPassword())) {
             if (changePasswordDTO.newPassword().equals(changePasswordDTO.confirmationPassword())) {
                 user.setPassword(passwordEncoder.encode(changePasswordDTO.newPassword()));
@@ -94,6 +95,17 @@ public class UserService {
             }
         } else {
             throw new BadRequestException("The wrong old password.");
+        }
+    }
+
+    @Transactional
+    public void resetPassword(UUID userID, ResetPasswordDTO resetPasswordDTO) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with id %s not found.", userID)));
+        if (resetPasswordDTO.password().equals(resetPasswordDTO.confirmationPassword())) {
+            user.setPassword(passwordEncoder.encode(resetPasswordDTO.password()));
+            userRepository.save(user);
+        } else {
+            throw new BadRequestException("The password are not the same.");
         }
     }
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmailSenderImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UsersManagement</a> &gt; <a href="index.source.html" class="el_package">users.management.service</a> &gt; <span class="el_source">EmailSenderImpl.java</span></div><h1>EmailSenderImpl.java</h1><pre class="source lang-java linenums">package users.management.service;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import users.management.exception.EmailException;
+
+@RequiredArgsConstructor
+<span class="fc" id="L13">@Slf4j</span>
+public class EmailSenderImpl implements EmailSender {
+
+    private final JavaMailSender javaMailSender;
+    private final String mailSender;
+
+    @Override
+    public void sendEmail(String to, String title, String content) throws EmailException {
+<span class="fc" id="L21">        log.info(&quot;Sending email '{}' to {}&quot;, title, to);</span>
+        try {
+<span class="fc" id="L23">            MimeMessage mail = javaMailSender.createMimeMessage();</span>
+<span class="fc" id="L24">            MimeMessageHelper helper = new MimeMessageHelper(mail, true);</span>
+<span class="fc" id="L25">            helper.setTo(to);</span>
+<span class="fc" id="L26">            helper.setFrom(mailSender);</span>
+<span class="fc" id="L27">            helper.setSubject(title);</span>
+<span class="fc" id="L28">            helper.setText(content, true);</span>
+<span class="fc" id="L29">            javaMailSender.send(mail);</span>
+<span class="fc" id="L30">            log.info(&quot;Email '{}' sent to {}&quot;, title, to);</span>
+<span class="fc" id="L31">        } catch (MessagingException e) {</span>
+<span class="fc" id="L32">            throw new EmailException(String.format(&quot;Cannot create email: %s&quot;, e.getMessage()), e);</span>
+<span class="fc" id="L33">        } catch (MailException e) {</span>
+<span class="fc" id="L34">            throw new EmailException(String.format(&quot;Cannot send email: %s&quot;, e.getMessage()), e);</span>
+<span class="fc" id="L35">        }</span>
+<span class="fc" id="L36">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

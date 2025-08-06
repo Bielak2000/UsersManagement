@@ -1,6 +1,8 @@
+users/management/UsersManagementFacadeServiceTest.class
+users/management/service/EmailSenderImplTest.class
 users/management/service/UserServiceTest.class
 users/management/service/VerificationTokenServiceTest.class
+users/management/service/EmailSenderServiceTest.class
 users/management/service/UserSettingsServiceTest.class
-users/management/UsersManagementFacadeServiceTest.class
 users/management/service/AddressServiceTest.class
 users/management/service/CompanyServiceTest.class

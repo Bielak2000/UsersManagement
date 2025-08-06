@@ -5,6 +5,7 @@ import users.management.dto.AddressFormDTO;
 import users.management.dto.ChangePasswordDTO;
 import users.management.dto.CompanyDTO;
 import users.management.dto.CompanyFormDTO;
+import users.management.dto.ResetPasswordDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserLoginDTO;
@@ -15,6 +16,7 @@ import users.management.entity.User;
 import users.management.exception.UnauthorizedException;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
+import users.management.service.EmailSenderService;
 import users.management.service.UserService;
 import users.management.service.UserSettingsService;
 import users.management.service.VerificationTokenService;
@@ -30,71 +32,88 @@ public class UsersManagementFacade {
     private final UserService userService;
     private final UserSettingsService userSettingsService;
     private final VerificationTokenService verificationTokenService;
+    private final EmailSenderService emailSenderService;
 
     public void createCompany(CompanyFormDTO companyFormDTO) {
-<span class="fc" id="L35">        Address address = addressService.create(companyFormDTO.addressFormDTO());</span>
-<span class="fc" id="L36">        companyService.create(companyFormDTO, address);</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L38">        Address address = addressService.create(companyFormDTO.addressFormDTO());</span>
+<span class="fc" id="L39">        companyService.create(companyFormDTO, address);</span>
+<span class="fc" id="L40">    }</span>
 
     public void createUser(UserFormDTO userFormDTO) {
-<span class="fc" id="L40">        Address address = createAddressForUser(userFormDTO.addressFormDTO());</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
-<span class="fc" id="L42">        User user = userService.create(userFormDTO, address, company);</span>
-<span class="fc" id="L43">        verificationTokenService.create(user);</span>
-<span class="fc" id="L44">    }</span>
-
-    public void updateCompany(UUID companyID, CompanyFormDTO companyFormDTO) {
-<span class="fc" id="L47">        companyService.update(companyID, companyFormDTO);</span>
+<span class="fc" id="L43">        Address address = createAddressForUser(userFormDTO.addressFormDTO());</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
+<span class="fc" id="L45">        User user = userService.create(userFormDTO, address, company);</span>
+<span class="fc" id="L46">        String verificationToken = verificationTokenService.create(user);</span>
+<span class="fc" id="L47">        emailSenderService.verificationAccount(user.getEmail(), String.format(&quot;%s %s&quot;, user.getName(), user.getSurname()), verificationToken, user.getId());</span>
 <span class="fc" id="L48">    }</span>
 
-    public void updateUser(UUID userID, UserFormDTO userFormDTO) {
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
-<span class="fc" id="L52">        userService.update(userID, userFormDTO, company);</span>
-<span class="fc" id="L53">    }</span>
+    public void updateCompany(UUID companyID, CompanyFormDTO companyFormDTO) {
+<span class="fc" id="L51">        companyService.update(companyID, companyFormDTO);</span>
+<span class="fc" id="L52">    }</span>
 
-    public void updateLastActivityUser(UUID userID) {
-<span class="fc" id="L56">        userService.updateLastActivityUser(userID);</span>
+    public void updateUser(UUID userID, UserFormDTO userFormDTO) {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;</span>
+<span class="fc" id="L56">        userService.update(userID, userFormDTO, company);</span>
 <span class="fc" id="L57">    }</span>
 
+    public void updateLastActivityUser(UUID userID) {
+<span class="fc" id="L60">        userService.updateLastActivityUser(userID);</span>
+<span class="fc" id="L61">    }</span>
+
     public void updateUserSettings(UUID userID, UserSettingsFormDTO userSettingsFormDTO) {
-<span class="fc" id="L60">        User user = userService.getUserById(userID);</span>
-<span class="fc" id="L61">        userSettingsService.updateUserSettings(user, userSettingsFormDTO);</span>
-<span class="fc" id="L62">    }</span>
+<span class="fc" id="L64">        User user = userService.getUserById(userID);</span>
+<span class="fc" id="L65">        userSettingsService.updateUserSettings(user, userSettingsFormDTO);</span>
+<span class="fc" id="L66">    }</span>
 
     public List&lt;CompanyDTO&gt; getCompanies() {
-<span class="fc" id="L65">        return companyService.getCompanies();</span>
+<span class="fc" id="L69">        return companyService.getCompanies();</span>
     }
 
     public List&lt;UserDTO&gt; getUsers() {
-<span class="fc" id="L69">        return userService.getUsers();</span>
+<span class="fc" id="L73">        return userService.getUsers();</span>
     }
 
     public List&lt;UserDTO&gt; getUsersByCompanyId(UUID companyId) {
-<span class="fc" id="L73">        return userService.getUsersByCompanyId(companyId);</span>
+<span class="fc" id="L77">        return userService.getUsersByCompanyId(companyId);</span>
     }
 
     public UserLoginDTO getUserLoginData(UUID userID) {
-<span class="fc" id="L77">        return userService.getUserLoginDataByUserID(userID);</span>
+<span class="fc" id="L81">        return userService.getUserLoginDataByUserID(userID);</span>
     }
 
     public void changeUserPassword(UUID userID, ChangePasswordDTO changePasswordDTO) {
-<span class="fc" id="L81">        userService.changePassword(userID, changePasswordDTO);</span>
-<span class="fc" id="L82">    }</span>
+<span class="fc" id="L85">        userService.changePassword(userID, changePasswordDTO);</span>
+<span class="fc" id="L86">    }</span>
 
     public void activateUser(UUID userID, String token) {
-<span class="fc" id="L85">        boolean validToken = verificationTokenService.isValidToken(token, userID);</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (validToken) {</span>
-<span class="fc" id="L87">            userService.enableUser(userID);</span>
+<span class="fc" id="L89">        boolean validToken = verificationTokenService.isValidToken(token, userID);</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (validToken) {</span>
+<span class="fc" id="L91">            userService.enableUser(userID);</span>
         } else {
-<span class="fc" id="L89">            throw new UnauthorizedException(String.format(&quot;The token %s for user %s has expired&quot;, token, userID));</span>
+<span class="fc" id="L93">            throw new UnauthorizedException(String.format(&quot;The token %s for user %s has expired&quot;, token, userID));</span>
         }
-<span class="fc" id="L91">    }</span>
+<span class="fc" id="L95">    }</span>
+
+    public void sendResetUserPasswordEmail(UUID userID) {
+<span class="fc" id="L98">        User user = userService.getUserById(userID);</span>
+<span class="fc" id="L99">        String verificationToken = verificationTokenService.create(user);</span>
+<span class="fc" id="L100">        emailSenderService.resetPassword(user.getEmail(), String.format(&quot;%s %s&quot;, user.getName(), user.getSurname()), verificationToken, user.getId());</span>
+<span class="fc" id="L101">    }</span>
+
+    public void resetUserPassword(UUID userID, ResetPasswordDTO resetPasswordDTO) {
+<span class="fc" id="L104">        boolean validToken = verificationTokenService.isValidToken(resetPasswordDTO.token(), userID);</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (validToken) {</span>
+<span class="fc" id="L106">            userService.resetPassword(userID, resetPasswordDTO);</span>
+        } else {
+<span class="fc" id="L108">            throw new UnauthorizedException(String.format(&quot;The token %s for user %s to reset password has expired&quot;, resetPasswordDTO.token(), userID));</span>
+        }
+<span class="fc" id="L110">    }</span>
 
     private Address createAddressForUser(AddressFormDTO addressFormDTO) {
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (addressFormDTO != null) {</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">            if (addressFormDTO.addressID() != null) return addressService.getById(addressFormDTO.addressID());</span>
-<span class="fc" id="L96">            else return new Address(addressFormDTO);</span>
-<span class="fc" id="L97">        } else return null;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (addressFormDTO != null) {</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">            if (addressFormDTO.addressID() != null) return addressService.getById(addressFormDTO.addressID());</span>
+<span class="fc" id="L115">            else return new Address(addressFormDTO);</span>
+<span class="fc" id="L116">        } else return null;</span>
     }
 
 }

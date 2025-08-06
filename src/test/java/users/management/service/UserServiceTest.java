@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import users.management.dto.AddressFormDTO;
 import users.management.dto.ChangePasswordDTO;
 import users.management.dto.CompanyFormDTO;
+import users.management.dto.ResetPasswordDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserSettingsFormDTO;
 import users.management.entity.Address;
@@ -338,7 +339,7 @@ public class UserServiceTest {
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(BadRequestException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO));
+        Assertions.assertThrows(NotFoundException.class, () -> userService.changePassword(UUID.randomUUID(), changePasswordDTO));
     }
 
     @Test
@@ -391,6 +392,46 @@ public class UserServiceTest {
 
         // then
         Assertions.assertThrows(NotFoundException.class, () -> userService.enableUser(UUID.randomUUID()));
+    }
+
+    @Test
+    public void resetPasswordShouldNotThrows() {
+        // given
+        Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO("Password123", "Password123", "token");
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
+
+        // then
+        Assertions.assertDoesNotThrow(() -> userService.resetPassword(UUID.randomUUID(), resetPasswordDTO));
+    }
+
+    @Test
+    public void resetPasswordShouldThrowNotFoundException() {
+        // given
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO("Password123", "Password123", "token");
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        // then
+        Assertions.assertThrows(NotFoundException.class, () -> userService.resetPassword(UUID.randomUUID(), resetPasswordDTO));
+    }
+
+    @Test
+    public void resetPasswordShouldThrowBadRequestException() {
+        // given
+        Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO("Password1", "Password123", "token");
+
+        // when
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
+
+        // then
+        Assertions.assertThrows(BadRequestException.class, () -> userService.resetPassword(UUID.randomUUID(), resetPasswordDTO));
     }
 
 }

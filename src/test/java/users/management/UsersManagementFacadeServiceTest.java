@@ -10,6 +10,7 @@ import users.management.dto.AddressFormDTO;
 import users.management.dto.ChangePasswordDTO;
 import users.management.dto.CompanyDTO;
 import users.management.dto.CompanyFormDTO;
+import users.management.dto.ResetPasswordDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserLoginDTO;
@@ -20,6 +21,7 @@ import users.management.entity.User;
 import users.management.exception.UnauthorizedException;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
+import users.management.service.EmailSenderService;
 import users.management.service.UserService;
 import users.management.service.UserSettingsService;
 import users.management.service.VerificationTokenService;
@@ -46,6 +48,8 @@ public class UsersManagementFacadeServiceTest {
     AddressService addressService;
     @Mock
     VerificationTokenService verificationTokenService;
+    @Mock
+    EmailSenderService emailSenderService;
     @InjectMocks
     UsersManagementFacade usersManagementFacade;
 
@@ -281,6 +285,43 @@ public class UsersManagementFacadeServiceTest {
 
         // then
         Assertions.assertThrows(UnauthorizedException.class, () -> usersManagementFacade.activateUser(UUID.randomUUID(), "token"));
+    }
+
+    @Test
+    public void sendResetPasswordNotThrow() {
+        // given
+        Company company = new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO));
+        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company);
+
+        // when
+        when(userService.getUserById(any())).thenReturn(user);
+
+        // then
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.sendResetUserPasswordEmail(UUID.randomUUID()));
+    }
+
+    @Test
+    public void resetUserPasswordShouldNotThrow() {
+        // given
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO("Password123", "Password123", "token");
+
+        // when
+        when(verificationTokenService.isValidToken(any(), any())).thenReturn(true);
+
+        // then
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.resetUserPassword(UUID.randomUUID(), resetPasswordDTO));
+    }
+
+    @Test
+    public void resetUserPasswordShouldThrowUnauthorizedException() {
+        // given
+        ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO("Password123", "Password123", "token");
+
+        // when
+        when(verificationTokenService.isValidToken(any(), any())).thenReturn(false);
+
+        // then
+        Assertions.assertThrows(UnauthorizedException.class, () -> usersManagementFacade.resetUserPassword(UUID.randomUUID(), resetPasswordDTO));
     }
 
 }

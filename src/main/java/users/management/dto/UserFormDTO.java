@@ -8,8 +8,10 @@ import javax.validation.constraints.Pattern;
 import java.util.UUID;
 
 public record UserFormDTO(@NotEmpty(message = "Name can't be empty") String name,
-                          @NotEmpty(message = "Password can't be empty") String password,
-                          @NotEmpty(message = "Confirmation password can't be empty") String confirmationPassword,
+                          @NotEmpty(message = "Password can't be empty")
+                          @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,}$", message = "The password does not meet the requirements") String password,
+                          @NotEmpty(message = "Confirmation password can't be empty")
+                          @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,}$", message = "The password does not meet the requirements") String confirmationPassword,
                           @NotEmpty(message = "Surname can't be empty") String surname,
                           @NotEmpty(message = "Email can't be emtpy") @Email String email,
                           @NotEmpty(message = "Role can't be empty") String role,

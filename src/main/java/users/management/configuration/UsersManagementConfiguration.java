@@ -1,12 +1,19 @@
 package users.management.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 import users.management.UsersManagementFacade;
 import users.management.repository.AddressRepository;
 import users.management.repository.CompanyRepository;
@@ -15,6 +22,10 @@ import users.management.repository.UserSettingsRepository;
 import users.management.repository.VerificationTokenRepository;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
+import users.management.service.EmailSender;
+import users.management.service.EmailSenderImpl;
+import users.management.mock.EmailSenderMock;
+import users.management.service.EmailSenderService;
 import users.management.service.UserService;
 import users.management.service.UserSettingsService;
 import users.management.service.VerificationTokenService;
@@ -23,6 +34,7 @@ import users.management.service.VerificationTokenService;
 @ComponentScan(basePackages = "users.management")
 @EntityScan(basePackages = "users.management.entity")
 @EnableJpaRepositories("users.management.repository")
+@EnableConfigurationProperties(EmailProperties.class)
 public class UsersManagementConfiguration {
 
     @Bean
@@ -46,14 +58,43 @@ public class UsersManagementConfiguration {
     }
 
     @Bean
-    public VerificationTokenService verificationTokenService(@Value("${users.management.token.validity.hours}") int tokenValidityHours,
+    public VerificationTokenService verificationTokenService(@Value("${users.management.email.token.validity.hours}") int tokenValidityHours,
                                                              VerificationTokenRepository verificationTokenRepository) {
         return new VerificationTokenService(tokenValidityHours, verificationTokenRepository);
     }
 
     @Bean
-    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService, VerificationTokenService verificationTokenService) {
-        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService, verificationTokenService);
+    @ConditionalOnMissingBean
+    public JavaMailSender javaMailSender() {
+        return new JavaMailSenderImpl();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public TemplateEngine templateEngine() {
+        return new SpringTemplateEngine();
+    }
+
+    @Profile("mock-mail")
+    @Bean
+    public EmailSender mockEmailSender() {
+        return new EmailSenderMock("MockMailSender");
+    }
+
+    @Profile("!mock-email")
+    @Bean
+    public EmailSender emailSenderImpl(JavaMailSender javaMailSender, @Value("${spring.mail.username}") String mailUsername) {
+        return new EmailSenderImpl(javaMailSender, mailUsername);
+    }
+
+    @Bean
+    public EmailSenderService emailSenderService(EmailSender emailSender, TemplateEngine templateEngine, EmailProperties emailProperties) {
+        return new EmailSenderService(emailProperties, emailSender, templateEngine);
+    }
+
+    @Bean
+    public UsersManagementFacade usersManagementFacade(AddressService addressService, CompanyService companyService, UserService userService, UserSettingsService userSettingsService, VerificationTokenService verificationTokenService, EmailSenderService emailSenderService) {
+        return new UsersManagementFacade(companyService, addressService, userService, userSettingsService, verificationTokenService, emailSenderService);
     }
 
 }

@@ -44,24 +44,6 @@ public class VerificationTokenServiceTest {
         verificationTokenService = new VerificationTokenService(24, verificationTokenRepository);
     }
 
-//    @Test
-//    void getAddressByIdShouldReturn() {
-//        // when
-//        when(addressRepository.findById(any())).thenReturn(Optional.of(ADDRESS));
-//
-//        // then
-//        Assertions.assertEquals(addressService.getById(UUID.randomUUID()).getId(), ADDRESS.getId());
-//    }
-//
-//    @Test
-//    void getAddressByIdShouldThrowNotFoundException() {
-//        // when
-//        when(addressRepository.findById(any())).thenReturn(Optional.empty());
-//
-//        // then
-//        Assertions.assertThrows(NotFoundException.class, () -> addressService.getById(UUID.randomUUID()));
-//    }
-
     @Test
     void shouldCreateVerificationToken() {
         // when

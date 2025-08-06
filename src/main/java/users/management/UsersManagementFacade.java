@@ -5,6 +5,7 @@ import users.management.dto.AddressFormDTO;
 import users.management.dto.ChangePasswordDTO;
 import users.management.dto.CompanyDTO;
 import users.management.dto.CompanyFormDTO;
+import users.management.dto.ResetPasswordDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserLoginDTO;
@@ -15,6 +16,7 @@ import users.management.entity.User;
 import users.management.exception.UnauthorizedException;
 import users.management.service.AddressService;
 import users.management.service.CompanyService;
+import users.management.service.EmailSenderService;
 import users.management.service.UserService;
 import users.management.service.UserSettingsService;
 import users.management.service.VerificationTokenService;
@@ -30,6 +32,7 @@ public class UsersManagementFacade {
     private final UserService userService;
     private final UserSettingsService userSettingsService;
     private final VerificationTokenService verificationTokenService;
+    private final EmailSenderService emailSenderService;
 
     public void createCompany(CompanyFormDTO companyFormDTO) {
         Address address = addressService.create(companyFormDTO.addressFormDTO());
@@ -40,7 +43,8 @@ public class UsersManagementFacade {
         Address address = createAddressForUser(userFormDTO.addressFormDTO());
         Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;
         User user = userService.create(userFormDTO, address, company);
-        verificationTokenService.create(user);
+        String verificationToken = verificationTokenService.create(user);
+        emailSenderService.verificationAccount(user.getEmail(), String.format("%s %s", user.getName(), user.getSurname()), verificationToken, user.getId());
     }
 
     public void updateCompany(UUID companyID, CompanyFormDTO companyFormDTO) {
@@ -87,6 +91,21 @@ public class UsersManagementFacade {
             userService.enableUser(userID);
         } else {
             throw new UnauthorizedException(String.format("The token %s for user %s has expired", token, userID));
+        }
+    }
+
+    public void sendResetUserPasswordEmail(UUID userID) {
+        User user = userService.getUserById(userID);
+        String verificationToken = verificationTokenService.create(user);
+        emailSenderService.resetPassword(user.getEmail(), String.format("%s %s", user.getName(), user.getSurname()), verificationToken, user.getId());
+    }
+
+    public void resetUserPassword(UUID userID, ResetPasswordDTO resetPasswordDTO) {
+        boolean validToken = verificationTokenService.isValidToken(resetPasswordDTO.token(), userID);
+        if (validToken) {
+            userService.resetPassword(userID, resetPasswordDTO);
+        } else {
+            throw new UnauthorizedException(String.format("The token %s for user %s to reset password has expired", resetPasswordDTO.token(), userID));
         }
     }
 

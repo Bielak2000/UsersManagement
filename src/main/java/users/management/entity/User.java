@@ -75,8 +75,4 @@ public class User extends BaseEntity {
         this.company = company;
     }
 
-    public void enabledUser() {
-        this.enabled = true;
-    }
-
 }

@@ -1,9 +1,11 @@
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/UsersManagementFacade.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/configuration/EmailProperties.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/configuration/UsersManagementConfiguration.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/AddressFormDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/ChangePasswordDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/CompanyDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/CompanyFormDTO.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/ResetPasswordDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/UserDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/UserFormDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/UserLoginDTO.java
@@ -15,8 +17,10 @@
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/entity/UserSettings.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/entity/VerificationToken.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/exception/BadRequestException.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/exception/EmailException.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/exception/NotFoundException.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/exception/UnauthorizedException.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/mock/EmailSenderMock.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/AddressRepository.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/CompanyRepository.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/UserRepository.java
@@ -24,6 +28,9 @@
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/repository/VerificationTokenRepository.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/AddressService.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/CompanyService.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/service/EmailSender.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/service/EmailSenderImpl.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/service/EmailSenderService.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/UserService.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/UserSettingsService.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/service/VerificationTokenService.java
