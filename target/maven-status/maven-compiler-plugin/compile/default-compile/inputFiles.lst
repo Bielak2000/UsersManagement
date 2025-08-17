@@ -10,6 +10,7 @@
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/UserFormDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/UserLoginDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/UserSettingsFormDTO.java
+/home/kacperbielak/Projects/users_management/src/main/java/users/management/dto/UserUpdateFormDTO.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/entity/Address.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/entity/BaseEntity.java
 /home/kacperbielak/Projects/users_management/src/main/java/users/management/entity/Company.java

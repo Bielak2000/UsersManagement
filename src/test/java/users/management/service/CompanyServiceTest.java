@@ -86,7 +86,7 @@ public class CompanyServiceTest {
         // then
         Assertions.assertAll(
                 () -> Assertions.assertDoesNotThrow(() -> companyService.create(COMPANY_FORM_DTO, ADDRESS)),
-                () -> Assertions.assertEquals(companyService.create(COMPANY_FORM_DTO, ADDRESS).getTaxIdentifiaction(), COMPANY_FORM_DTO.taxIdentifiaction()),
+                () -> Assertions.assertEquals(companyService.create(COMPANY_FORM_DTO, ADDRESS).getTaxIdentification(), COMPANY_FORM_DTO.taxIdentifiaction()),
                 () -> Assertions.assertEquals(companyService.create(COMPANY_FORM_DTO, ADDRESS).getEmail(), COMPANY_FORM_DTO.email()),
                 () -> Assertions.assertEquals(companyService.create(COMPANY_FORM_DTO, ADDRESS).getAddress().getCity(), ADDRESS_FORM_DTO.city()),
                 () -> Assertions.assertEquals(companyService.create(COMPANY_FORM_DTO, ADDRESS).getAddress().getStreet(), ADDRESS_FORM_DTO.street())
@@ -109,7 +109,7 @@ public class CompanyServiceTest {
         // then
         Assertions.assertAll(
                 () -> Assertions.assertDoesNotThrow(() -> companyService.update(company.getId(), newCompanyFormDTO)),
-                () -> Assertions.assertEquals(companyService.update(company.getId(), newCompanyFormDTO).getTaxIdentifiaction(), newCompanyFormDTO.taxIdentifiaction()),
+                () -> Assertions.assertEquals(companyService.update(company.getId(), newCompanyFormDTO).getTaxIdentification(), newCompanyFormDTO.taxIdentifiaction()),
                 () -> Assertions.assertEquals(companyService.update(company.getId(), newCompanyFormDTO).getEmail(), newCompanyFormDTO.email()),
                 () -> Assertions.assertEquals(companyService.update(company.getId(), newCompanyFormDTO).getAddress().getCity(), newAddressFormDTO.city()),
                 () -> Assertions.assertEquals(companyService.update(company.getId(), newCompanyFormDTO).getAddress().getStreet(), newAddressFormDTO.street())

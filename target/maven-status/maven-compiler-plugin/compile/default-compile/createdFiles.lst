@@ -3,6 +3,7 @@ users/management/dto/UserSettingsFormDTO.class
 users/management/dto/ResetPasswordDTO.class
 users/management/service/EmailSenderImpl.class
 users/management/dto/UserFormDTO.class
+users/management/dto/UserUpdateFormDTO.class
 users/management/configuration/UsersManagementConfiguration.class
 users/management/configuration/EmailProperties.class
 users/management/service/EmailSender.class

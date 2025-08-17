@@ -1,9 +1,9 @@
 package users.management.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +13,7 @@ import users.management.dto.CompanyFormDTO;
 import users.management.dto.ResetPasswordDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserSettingsFormDTO;
+import users.management.dto.UserUpdateFormDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
 import users.management.entity.User;
@@ -36,7 +37,6 @@ public class UserServiceTest {
     @Mock
     PasswordEncoder passwordEncoder;
 
-    @InjectMocks
     UserService userService;
 
     private static final List<AddressFormDTO> ADDRESS_FORM_DTO_LIST = List.of(
@@ -66,19 +66,24 @@ public class UserServiceTest {
 
     private static final List<UserFormDTO> USER_FORM_DTO_LIST = List.of(
             new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", COMPANY_LIST.get(0).getId(), ADDRESS_FORM_DTO_LIST.get(0), USER_SETTINGS_FORM_DTO_LIST.get(0)),
-            new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", COMPANY_LIST.get(1).getId(), ADDRESS_FORM_DTO_LIST.get(0), USER_SETTINGS_FORM_DTO_LIST.get(1)),
-            new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", COMPANY_LIST.get(2).getId(), ADDRESS_FORM_DTO_LIST.get(0), USER_SETTINGS_FORM_DTO_LIST.get(2))
+            new UserFormDTO("name2", "password2", "password2", "surname2", "email2@test.pl", "role2", "123123112", COMPANY_LIST.get(1).getId(), ADDRESS_FORM_DTO_LIST.get(0), USER_SETTINGS_FORM_DTO_LIST.get(1)),
+            new UserFormDTO("name3", "password3", "password3", "surname3", "email3@test.pl", "role3", "123123113", COMPANY_LIST.get(2).getId(), ADDRESS_FORM_DTO_LIST.get(0), USER_SETTINGS_FORM_DTO_LIST.get(2))
     );
 
     private static final ChangePasswordDTO CHANGE_PASSWORD_DTO = new ChangePasswordDTO("oldPass", "newPass", "new Pass");
+
+    @BeforeEach
+    void setUp() {
+        userService = new UserService("mock-mail", passwordEncoder, userRepository);
+    }
 
     @Test
     void getUsersShouldReturn() {
         // given
         List<User> users = List.of(
-                new User(USER_FORM_DTO_LIST.get(0), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0)),
-                new User(USER_FORM_DTO_LIST.get(1), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(1)), COMPANY_LIST.get(1)),
-                new User(USER_FORM_DTO_LIST.get(2), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(2)), COMPANY_LIST.get(2))
+                new User(USER_FORM_DTO_LIST.get(0), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true),
+                new User(USER_FORM_DTO_LIST.get(1), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(1)), COMPANY_LIST.get(1), true),
+                new User(USER_FORM_DTO_LIST.get(2), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(2)), COMPANY_LIST.get(2), true)
         );
 
         // when
@@ -122,7 +127,7 @@ public class UserServiceTest {
         // given
         UUID companyID = COMPANY_LIST.get(0).getId();
         List<User> users = List.of(
-                new User(USER_FORM_DTO_LIST.get(0), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0))
+                new User(USER_FORM_DTO_LIST.get(0), "password1", new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true)
         );
 
         // when
@@ -146,7 +151,7 @@ public class UserServiceTest {
     @Test
     void shouldCreateUser() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
 
         // when
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -172,7 +177,7 @@ public class UserServiceTest {
     @Test
     void createAlreadyExistsUserShouldThrowBadRequestException() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
 
         // when
         when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.of(user));
@@ -184,7 +189,7 @@ public class UserServiceTest {
     @Test
     void shouldUpdateLastActivityUser() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
 
         // when
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
@@ -205,59 +210,93 @@ public class UserServiceTest {
     @Test
     void shouldUpdateUser() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
-        User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), new Address(ADDRESS_FORM_DTO_LIST.get(1)), COMPANY_LIST.get(1));
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
+        User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), new Address(ADDRESS_FORM_DTO_LIST.get(1)), COMPANY_LIST.get(1), true);
+        UserUpdateFormDTO userUpdateFormDTO = new UserUpdateFormDTO(USER_FORM_DTO_LIST.get(1).name(), USER_FORM_DTO_LIST.get(1).surname(), USER_FORM_DTO_LIST.get(1).email(), USER_FORM_DTO_LIST.get(1).phoneNumber(), null, ADDRESS_FORM_DTO_LIST.get(1), null);
 
         // when
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0))),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getName(), USER_FORM_DTO_LIST.get(1).name()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getEmail(), USER_FORM_DTO_LIST.get(1).email()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getAddress()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getAddress().getCity(), ADDRESS_FORM_DTO_LIST.get(1).city()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getCompany()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getCompany().getName(), COMPANY_LIST.get(1).getName()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getUserSettings()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO_LIST.get(1).emailNotification())
+        );
     }
 
     @Test
     void shouldUpdateUserWithNullAsNewAddress() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
-        User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), null, COMPANY_LIST.get(1));
-        UserFormDTO userFormDTOWithoutAddress = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", COMPANY_LIST.get(0).getId(), null, null);
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
+        User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), null, COMPANY_LIST.get(1), true);
+        UserUpdateFormDTO userFormDTO = new UserUpdateFormDTO(USER_FORM_DTO_LIST.get(1).name(), USER_FORM_DTO_LIST.get(1).surname(), USER_FORM_DTO_LIST.get(1).email(), USER_FORM_DTO_LIST.get(1).phoneNumber(), COMPANY_LIST.get(0).getId(), null, null);
 
         // when
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), userFormDTOWithoutAddress, COMPANY_LIST.get(0)));
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0))),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0)).getName(), USER_FORM_DTO_LIST.get(1).name()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0)).getEmail(), USER_FORM_DTO_LIST.get(1).email()),
+                () -> Assertions.assertNull(userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0)).getAddress()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0)).getCompany()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0)).getCompany().getName(), COMPANY_LIST.get(1).getName()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0)).getUserSettings()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userFormDTO, COMPANY_LIST.get(0)).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO_LIST.get(1).emailNotification())
+        );
     }
 
     @Test
     void shouldUpdateUserWithNullAsCurrentAddress() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), null, COMPANY_LIST.get(0));
-        User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(1));
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), null, COMPANY_LIST.get(0), true);
+        User newUser = new User(USER_FORM_DTO_LIST.get(1), passwordEncoder.encode(USER_FORM_DTO_LIST.get(1).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(1), true);
+        UserUpdateFormDTO userUpdateFormDTO = new UserUpdateFormDTO(USER_FORM_DTO_LIST.get(1).name(), USER_FORM_DTO_LIST.get(1).surname(), USER_FORM_DTO_LIST.get(1).email(), USER_FORM_DTO_LIST.get(1).phoneNumber(), null, ADDRESS_FORM_DTO_LIST.get(0), null);
 
         // when
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         // then
-        Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0))),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getName(), USER_FORM_DTO_LIST.get(1).name()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getEmail(), USER_FORM_DTO_LIST.get(1).email()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getAddress()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getAddress().getCity(), ADDRESS_FORM_DTO_LIST.get(0).city()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getCompany()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getCompany().getName(), COMPANY_LIST.get(1).getName()),
+                () -> Assertions.assertNotNull(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getUserSettings()),
+                () -> Assertions.assertEquals(userService.update(user.getId(), userUpdateFormDTO, COMPANY_LIST.get(0)).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO_LIST.get(1).emailNotification())
+        );
     }
 
     @Test
     void updateUserShouldThrowNotFoundException() {
+        // given
+        UserUpdateFormDTO userUpdateFormDTO = new UserUpdateFormDTO("name", "surname", "email@test.pl", "123123123", UUID.randomUUID(), ADDRESS_FORM_DTO_LIST.get(0), null);
+
         // when
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(NotFoundException.class, () -> userService.update(UUID.randomUUID(), USER_FORM_DTO_LIST.get(1), COMPANY_LIST.get(0)));
+        Assertions.assertThrows(NotFoundException.class, () -> userService.update(UUID.randomUUID(), userUpdateFormDTO, COMPANY_LIST.get(0)));
     }
 
     @Test
-    void getUserByEmailShouldReturn() {
+    void getUserByIdShouldReturn() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
         UUID userID = user.getId();
 
         // when
@@ -278,7 +317,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getUserByEmailShouldThrowNotFoundException() {
+    void getUserByIdShouldThrowNotFoundException() {
         // when
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -287,9 +326,41 @@ public class UserServiceTest {
     }
 
     @Test
+    void getUserByEmailShouldReturn() {
+        // given
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
+        String email = user.getEmail();
+
+        // when
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> userService.getUserByEmail(email)),
+                () -> Assertions.assertEquals(userService.getUserByEmail(email).getName(), USER_FORM_DTO_LIST.get(0).name()),
+                () -> Assertions.assertEquals(userService.getUserByEmail(email).getEmail(), USER_FORM_DTO_LIST.get(0).email()),
+                () -> Assertions.assertNotNull(userService.getUserByEmail(email).getAddress()),
+                () -> Assertions.assertEquals(userService.getUserByEmail(email).getAddress().getCity(), ADDRESS_FORM_DTO_LIST.get(0).city()),
+                () -> Assertions.assertNotNull(userService.getUserByEmail(email).getCompany()),
+                () -> Assertions.assertEquals(userService.getUserByEmail(email).getCompany().getName(), COMPANY_LIST.get(0).getName()),
+                () -> Assertions.assertNotNull(userService.getUserByEmail(email).getUserSettings()),
+                () -> Assertions.assertEquals(userService.getUserByEmail(email).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO_LIST.get(0).emailNotification())
+        );
+    }
+
+    @Test
+    void getUserByEmailShouldThrowNotFoundException() {
+        // when
+        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+
+        // then
+        Assertions.assertThrows(NotFoundException.class, () -> userService.getUserByEmail("email@test.pl"));
+    }
+
+    @Test
     void getUserDataLoginByUserIDShouldReturn() {
         // given
-        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0));
+        User user = new User(USER_FORM_DTO_LIST.get(0), passwordEncoder.encode(USER_FORM_DTO_LIST.get(0).password()), new Address(ADDRESS_FORM_DTO_LIST.get(0)), COMPANY_LIST.get(0), true);
         UUID userID = user.getId();
 
         // when
@@ -319,7 +390,7 @@ public class UserServiceTest {
     public void changePasswordShouldChange() {
         // given
         Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
-        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company, true);
         ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("password", "newPass", "newPass");
 
         // when
@@ -346,7 +417,7 @@ public class UserServiceTest {
     public void changePasswordWithDifferentPasswordShouldThrowBadRequestException() {
         // given
         Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
-        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company, true);
         ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("password", "newPass", "newPass1");
 
         // when
@@ -361,7 +432,7 @@ public class UserServiceTest {
     public void changePasswordWithBadPasswordShouldThrowBadRequestException() {
         // given
         Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
-        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company, true);
         ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO("password1", "newPass", "newPass");
 
         // when
@@ -376,7 +447,7 @@ public class UserServiceTest {
     public void enableUserShouldEnable() {
         // given
         Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
-        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company, true);
 
         // when
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
@@ -398,7 +469,7 @@ public class UserServiceTest {
     public void resetPasswordShouldNotThrows() {
         // given
         Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
-        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company, true);
         ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO("Password123", "Password123", "token");
 
         // when
@@ -424,7 +495,7 @@ public class UserServiceTest {
     public void resetPasswordShouldThrowBadRequestException() {
         // given
         Company company = new Company(COMPANY_DTO_LIST.get(0), new Address(ADDRESS_FORM_DTO_LIST.get(0)));
-        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company);
+        User user = new User(USER_FORM_DTO_LIST.get(0), "password", new Address(ADDRESS_FORM_DTO_LIST.get(0)), company, true);
         ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO("Password1", "Password123", "token");
 
         // when

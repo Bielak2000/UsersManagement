@@ -30,7 +30,7 @@ import java.util.UUID;
 public class Company extends BaseEntity {
 
     private String name;
-    private String taxIdentifiaction;
+    private String taxIdentification;
     private String email;
     private String phoneNumber;
     @ManyToOne
@@ -42,7 +42,7 @@ public class Company extends BaseEntity {
     public Company(CompanyFormDTO companyFormDTO, Address address) {
 <span class="fc" id="L43">        super(UUID.randomUUID());</span>
 <span class="fc" id="L44">        this.name = companyFormDTO.name();</span>
-<span class="fc" id="L45">        this.taxIdentifiaction = companyFormDTO.taxIdentifiaction();</span>
+<span class="fc" id="L45">        this.taxIdentification = companyFormDTO.taxIdentifiaction();</span>
 <span class="fc" id="L46">        this.email = companyFormDTO.email();</span>
 <span class="fc" id="L47">        this.phoneNumber = companyFormDTO.phoneNumber();</span>
 <span class="fc" id="L48">        this.address = address;</span>
@@ -51,7 +51,7 @@ public class Company extends BaseEntity {
 
     public void update(CompanyFormDTO companyFormDTO, Address address) {
 <span class="fc" id="L53">        this.name = companyFormDTO.name();</span>
-<span class="fc" id="L54">        this.taxIdentifiaction = companyFormDTO.taxIdentifiaction();</span>
+<span class="fc" id="L54">        this.taxIdentification = companyFormDTO.taxIdentifiaction();</span>
 <span class="fc" id="L55">        this.email = companyFormDTO.email();</span>
 <span class="fc" id="L56">        this.phoneNumber = companyFormDTO.phoneNumber();</span>
 <span class="fc" id="L57">        this.address = address;</span>

@@ -10,6 +10,7 @@ import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserLoginDTO;
 import users.management.dto.UserSettingsFormDTO;
+import users.management.dto.UserUpdateFormDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
 import users.management.entity.User;
@@ -39,21 +40,22 @@ public class UsersManagementFacade {
         companyService.create(companyFormDTO, address);
     }
 
-    public void createUser(UserFormDTO userFormDTO) {
+    public User createUser(UserFormDTO userFormDTO) {
         Address address = createAddressForUser(userFormDTO.addressFormDTO());
         Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;
         User user = userService.create(userFormDTO, address, company);
         String verificationToken = verificationTokenService.create(user);
         emailSenderService.verificationAccount(user.getEmail(), String.format("%s %s", user.getName(), user.getSurname()), verificationToken, user.getId());
+        return user;
     }
 
     public void updateCompany(UUID companyID, CompanyFormDTO companyFormDTO) {
         companyService.update(companyID, companyFormDTO);
     }
 
-    public void updateUser(UUID userID, UserFormDTO userFormDTO) {
-        Company company = userFormDTO.companyID() != null ? companyService.getById(userFormDTO.companyID()) : null;
-        userService.update(userID, userFormDTO, company);
+    public User updateUser(UUID userID, UserUpdateFormDTO userUpdateFormDTO) {
+        Company company = userUpdateFormDTO.companyID() != null ? companyService.getById(userUpdateFormDTO.companyID()) : null;
+        return userService.update(userID, userUpdateFormDTO, company);
     }
 
     public void updateLastActivityUser(UUID userID) {
@@ -107,6 +109,14 @@ public class UsersManagementFacade {
         } else {
             throw new UnauthorizedException(String.format("The token %s for user %s to reset password has expired", resetPasswordDTO.token(), userID));
         }
+    }
+
+    public User getUserById(UUID userID) {
+        return userService.getUserById(userID);
+    }
+
+    public User getUserByEmail(String email) {
+        return userService.getUserByEmail(email);
     }
 
     private Address createAddressForUser(AddressFormDTO addressFormDTO) {

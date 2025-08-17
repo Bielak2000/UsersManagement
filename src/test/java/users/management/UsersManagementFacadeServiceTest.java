@@ -15,6 +15,7 @@ import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserLoginDTO;
 import users.management.dto.UserSettingsFormDTO;
+import users.management.dto.UserUpdateFormDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
 import users.management.entity.User;
@@ -68,7 +69,7 @@ public class UsersManagementFacadeServiceTest {
     @Test
     public void createUserWithExistsAddressShouldNotThrow() {
         // given
-        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
+        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)), true);
 
         // when
         when(companyService.getById(any())).thenReturn(new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
@@ -85,7 +86,7 @@ public class UsersManagementFacadeServiceTest {
         // given
         AddressFormDTO addressFormDTO = new AddressFormDTO(null, "town", "postalCode", "houseNumber", "apartmentNumber", "city", "street");
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", UUID.randomUUID(), addressFormDTO, USER_SETTINGS_FORM_DTO);
-        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
+        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)), true);
 
         // when
         when(companyService.getById(any())).thenReturn(new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
@@ -100,7 +101,7 @@ public class UsersManagementFacadeServiceTest {
     public void createUserWithoutAddressShouldNotThrow() {
         // given
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", UUID.randomUUID(), null, USER_SETTINGS_FORM_DTO);
-        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
+        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)), true);
 
         // when
         when(companyService.getById(any())).thenReturn(new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
@@ -115,7 +116,7 @@ public class UsersManagementFacadeServiceTest {
     public void createUserWithoutCompanyShouldNotThrow() {
         // given
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", null, ADDRESS_FORM_DTO, USER_SETTINGS_FORM_DTO);
-        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
+        User user = new User(userFormDTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)), true);
 
         // when
         when(addressService.getById(any(UUID.class))).thenReturn(new Address(ADDRESS_FORM_DTO));
@@ -141,21 +142,22 @@ public class UsersManagementFacadeServiceTest {
     public void updateUserShouldNotThrow() {
         // given
         Company company = new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO));
+        UserUpdateFormDTO userUpdateFormDTO = new UserUpdateFormDTO("name", "surname", "email@test.pl", "123123123", company.getId(), ADDRESS_FORM_DTO, null);
 
         // when
         when(companyService.getById(any(UUID.class))).thenReturn(company);
 
         // then
-        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(UUID.randomUUID(), USER_FORM_DTO));
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(UUID.randomUUID(), userUpdateFormDTO));
     }
 
     @Test
     public void updateUserWithoutCompanyShouldNotThrow() {
         // given
-        UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", null, ADDRESS_FORM_DTO, USER_SETTINGS_FORM_DTO);
+        UserUpdateFormDTO userUpdateFormDTO = new UserUpdateFormDTO("name", "surname", "email@test.pl", "123123123", null, ADDRESS_FORM_DTO, null);
 
         // then
-        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(UUID.randomUUID(), userFormDTO));
+        Assertions.assertDoesNotThrow(() -> usersManagementFacade.updateUser(UUID.randomUUID(), userUpdateFormDTO));
     }
 
     @Test
@@ -171,7 +173,7 @@ public class UsersManagementFacadeServiceTest {
     public void updateUserSettingsShouldNotThrow() {
         // given
         Company company = new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO));
-        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company);
+        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company, true);
 
         // when
         when(userService.getUserById(any(UUID.class))).thenReturn(user);
@@ -291,7 +293,7 @@ public class UsersManagementFacadeServiceTest {
     public void sendResetPasswordNotThrow() {
         // given
         Company company = new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO));
-        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company);
+        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company, true);
 
         // when
         when(userService.getUserById(any())).thenReturn(user);
@@ -322,6 +324,52 @@ public class UsersManagementFacadeServiceTest {
 
         // then
         Assertions.assertThrows(UnauthorizedException.class, () -> usersManagementFacade.resetUserPassword(UUID.randomUUID(), resetPasswordDTO));
+    }
+
+    @Test
+    public void getUserByIdShouldReturn() {
+        // given
+        Company company = new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO));
+        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company, true);
+
+        // when
+        when(userService.getUserById(any(UUID.class))).thenReturn(user);
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> usersManagementFacade.getUserById(user.getId())),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserById(user.getId()).getName(), USER_FORM_DTO.name()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserById(user.getId()).getEmail(), USER_FORM_DTO.email()),
+                () -> Assertions.assertNotNull(usersManagementFacade.getUserById(user.getId()).getAddress()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserById(user.getId()).getAddress().getCity(), ADDRESS_FORM_DTO.city()),
+                () -> Assertions.assertNotNull(usersManagementFacade.getUserById(user.getId()).getCompany()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserById(user.getId()).getCompany().getName(), company.getName()),
+                () -> Assertions.assertNotNull(usersManagementFacade.getUserById(user.getId()).getUserSettings()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserById(user.getId()).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO.emailNotification())
+        );
+    }
+
+    @Test
+    public void getUserByEmailShouldReturn() {
+        // given
+        Company company = new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO));
+        User user = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), company, true);
+
+        // when
+        when(userService.getUserByEmail(any(String.class))).thenReturn(user);
+
+        // then
+        Assertions.assertAll(
+                () -> Assertions.assertDoesNotThrow(() -> usersManagementFacade.getUserByEmail(user.getEmail())),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserByEmail(user.getEmail()).getName(), USER_FORM_DTO.name()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserByEmail(user.getEmail()).getEmail(), USER_FORM_DTO.email()),
+                () -> Assertions.assertNotNull(usersManagementFacade.getUserByEmail(user.getEmail()).getAddress()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserByEmail(user.getEmail()).getAddress().getCity(), ADDRESS_FORM_DTO.city()),
+                () -> Assertions.assertNotNull(usersManagementFacade.getUserByEmail(user.getEmail()).getCompany()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserByEmail(user.getEmail()).getCompany().getName(), company.getName()),
+                () -> Assertions.assertNotNull(usersManagementFacade.getUserByEmail(user.getEmail()).getUserSettings()),
+                () -> Assertions.assertEquals(usersManagementFacade.getUserByEmail(user.getEmail()).getUserSettings().isEmailNotification(), USER_SETTINGS_FORM_DTO.emailNotification())
+        );
     }
 
 }

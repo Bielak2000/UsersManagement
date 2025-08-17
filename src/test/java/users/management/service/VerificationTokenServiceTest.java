@@ -36,7 +36,7 @@ public class VerificationTokenServiceTest {
     private static final AddressFormDTO ADDRESS_FORM_DTO = new AddressFormDTO(UUID.randomUUID(), "town", "postalCode", "houseNumber", "apartmentNumber", "city", "street");
     private static final CompanyFormDTO COMPANY_FORM_DTO = new CompanyFormDTO("name", "tax", "123123123", "email", ADDRESS_FORM_DTO);
     private static final UserFormDTO USER_FORM_DTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", UUID.randomUUID(), ADDRESS_FORM_DTO, USER_SETTINGS_FORM_DTO);
-    private static final User USER = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)));
+    private static final User USER = new User(USER_FORM_DTO, "password", new Address(ADDRESS_FORM_DTO), new Company(COMPANY_FORM_DTO, new Address(ADDRESS_FORM_DTO)), true);
     private static final VerificationToken VERIFICATION_TOKEN = new VerificationToken("TOKEN", LocalDateTime.now().plusHours(30), USER);
 
     @BeforeEach

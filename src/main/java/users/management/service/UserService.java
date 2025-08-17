@@ -8,6 +8,7 @@ import users.management.dto.ResetPasswordDTO;
 import users.management.dto.UserDTO;
 import users.management.dto.UserFormDTO;
 import users.management.dto.UserLoginDTO;
+import users.management.dto.UserUpdateFormDTO;
 import users.management.entity.Address;
 import users.management.entity.Company;
 import users.management.entity.User;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserService {
 
+    private final String activeProfile;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
@@ -40,6 +42,11 @@ public class UserService {
         return userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with id %s doesn't exists.", userID)));
     }
 
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format("User with email %s doesn't exists.", email)));
+    }
+
     @Transactional
     public void enableUser(UUID userID) {
         User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with id %s doesn't exists.", userID)));
@@ -51,7 +58,7 @@ public class UserService {
     public User create(UserFormDTO userFormDTO, Address address, Company company) {
         if (userFormDTO.password().equals(userFormDTO.confirmationPassword())) {
             if (userRepository.findByEmail(userFormDTO.email()).isEmpty()) {
-                User user = new User(userFormDTO, passwordEncoder.encode(userFormDTO.password()), address, company);
+                User user = new User(userFormDTO, passwordEncoder.encode(userFormDTO.password()), address, company, activeProfile.equals("mock-mail"));
                 userRepository.save(user);
                 return user;
             } else {
@@ -70,11 +77,11 @@ public class UserService {
     }
 
     @Transactional
-    public void update(UUID userID, UserFormDTO userFormDTO, Company company) {
+    public User update(UUID userID, UserUpdateFormDTO userUpdateFormDTO, Company company) {
         User user = userRepository.findById(userID).orElseThrow(() -> new NotFoundException(String.format("User with ID %s doesn't exists.", userID)));
-        Address address = updateUserAddress(user, userFormDTO.addressFormDTO());
-        user.update(userFormDTO, address, company);
-        userRepository.save(user);
+        Address address = updateUserAddress(user, userUpdateFormDTO.addressFormDTO());
+        user.update(userUpdateFormDTO, address, company);
+        return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)

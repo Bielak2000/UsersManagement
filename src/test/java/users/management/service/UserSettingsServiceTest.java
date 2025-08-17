@@ -33,7 +33,7 @@ public class UserSettingsServiceTest {
         CompanyFormDTO companyFormDTO = new CompanyFormDTO("name1", "tax1", "123123111", "email1@test.pl", addressFormDTO);
         UserSettingsFormDTO userSettingsFormDTO = new UserSettingsFormDTO(false, false, false);
         UserFormDTO userFormDTO = new UserFormDTO("name1", "password1", "password1", "surname1", "email1@test.pl", "role1", "123123111", UUID.randomUUID(), addressFormDTO, userSettingsFormDTO);
-        User user = new User(userFormDTO, "password1", new Address(addressFormDTO), new Company(companyFormDTO, new Address(addressFormDTO)));
+        User user = new User(userFormDTO, "password1", new Address(addressFormDTO), new Company(companyFormDTO, new Address(addressFormDTO)), true);
         UserSettingsFormDTO newUserSettingsFormDTO = new UserSettingsFormDTO(false, true, false);
 
         // then

@@ -70,6 +70,5 @@ CREATE TABLE users.verification_token
     created_at  DATE         NOT NULL,
     modified_at DATE         NOT NULL,
     deleted     boolean      NOT NULL,
-    enabled     boolean      NOT NULL,
     CONSTRAINT fk_users_token FOREIGN KEY (user_id) REFERENCES users.users (id)
 );

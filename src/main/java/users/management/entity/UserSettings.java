@@ -27,7 +27,7 @@ public class UserSettings extends BaseEntity {
     private boolean smsNotification;
     private boolean appNotification;
     private boolean emailNotification;
-    @OneToOne(mappedBy = "user_settings")
+    @OneToOne(mappedBy = "userSettings")
     private User user;
 
     public UserSettings(UserSettingsFormDTO userSettingsFormDTO, User user) {

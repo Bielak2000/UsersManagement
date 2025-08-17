@@ -16,6 +16,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import users.management.dto.UserFormDTO;
+import users.management.dto.UserUpdateFormDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -47,30 +48,29 @@ public class User extends BaseEntity {
     @JoinColumn(name = &quot;company_id&quot;)
     private Company company;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = &quot;users_settings_id&quot;, referencedColumnName = &quot;id&quot;)
+    @JoinColumn(name = &quot;user_settings_id&quot;, referencedColumnName = &quot;id&quot;)
     private UserSettings userSettings;
 
-    public User(UserFormDTO userFormDTO, String password, Address address, Company company) {
-<span class="fc" id="L54">        super(UUID.randomUUID());</span>
-<span class="fc" id="L55">        this.lastActivityAt = LocalDateTime.now();</span>
-<span class="fc" id="L56">        this.name = userFormDTO.name();</span>
-<span class="fc" id="L57">        this.role = userFormDTO.role();</span>
-<span class="fc" id="L58">        this.password = password;</span>
-<span class="fc" id="L59">        this.surname = userFormDTO.surname();</span>
-<span class="fc" id="L60">        this.email = userFormDTO.email();</span>
-<span class="fc" id="L61">        this.phoneNumber = userFormDTO.phoneNumber();</span>
-<span class="fc" id="L62">        this.address = address;</span>
-<span class="fc" id="L63">        this.company = company;</span>
-<span class="fc" id="L64">        this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);</span>
-<span class="fc" id="L65">        this.enabled = false;</span>
-<span class="fc" id="L66">    }</span>
+    public User(UserFormDTO userFormDTO, String password, Address address, Company company, boolean enabled) {
+<span class="fc" id="L55">        super(UUID.randomUUID());</span>
+<span class="fc" id="L56">        this.lastActivityAt = LocalDateTime.now();</span>
+<span class="fc" id="L57">        this.name = userFormDTO.name();</span>
+<span class="fc" id="L58">        this.role = userFormDTO.role();</span>
+<span class="fc" id="L59">        this.password = password;</span>
+<span class="fc" id="L60">        this.surname = userFormDTO.surname();</span>
+<span class="fc" id="L61">        this.email = userFormDTO.email();</span>
+<span class="fc" id="L62">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+<span class="fc" id="L63">        this.address = address;</span>
+<span class="fc" id="L64">        this.company = company;</span>
+<span class="fc" id="L65">        this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);</span>
+<span class="fc" id="L66">        this.enabled = enabled;</span>
+<span class="fc" id="L67">    }</span>
 
-    public void update(UserFormDTO userFormDTO, Address address, Company company) {
-<span class="fc" id="L69">        this.name = userFormDTO.name();</span>
-<span class="fc" id="L70">        this.role = userFormDTO.role();</span>
-<span class="fc" id="L71">        this.surname = userFormDTO.surname();</span>
-<span class="fc" id="L72">        this.email = userFormDTO.email();</span>
-<span class="fc" id="L73">        this.phoneNumber = userFormDTO.phoneNumber();</span>
+    public void update(UserUpdateFormDTO userUpdateFormDTO, Address address, Company company) {
+<span class="fc" id="L70">        this.name = userUpdateFormDTO.name();</span>
+<span class="fc" id="L71">        this.surname = userUpdateFormDTO.surname();</span>
+<span class="fc" id="L72">        this.email = userUpdateFormDTO.email();</span>
+<span class="fc" id="L73">        this.phoneNumber = userUpdateFormDTO.phoneNumber();</span>
 <span class="fc" id="L74">        this.address = address;</span>
 <span class="fc" id="L75">        this.company = company;</span>
 <span class="fc" id="L76">    }</span>

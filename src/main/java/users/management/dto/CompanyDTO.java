@@ -19,7 +19,7 @@ public record CompanyDTO(@NotEmpty(message = "Name can't be empty") String name,
         return company != null ?
                 CompanyDTO.builder()
                         .name(company.getName())
-                        .taxIdentifiaction(company.getTaxIdentifiaction())
+                        .taxIdentifiaction(company.getTaxIdentification())
                         .phoneNumber(company.getPhoneNumber())
                         .email(company.getEmail())
                         .addressDTO(AddressFormDTO.create(company.getAddress()))

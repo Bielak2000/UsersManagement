@@ -44,4 +44,4 @@ Additionally, you should set the following properties in the application.propert
 If you want to set a profile you should set properties `spring.profiles.active`.
 
 Possible profiles:
-* `mock-email` - mocks sending verification account and user reset password email addresses.
+* `mock-mail` - mocks sending verification account and user reset password email addresses.

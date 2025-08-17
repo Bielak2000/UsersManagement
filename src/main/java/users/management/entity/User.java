@@ -16,6 +16,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import users.management.dto.UserFormDTO;
+import users.management.dto.UserUpdateFormDTO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -47,10 +48,10 @@ public class User extends BaseEntity {
     @JoinColumn(name = "company_id")
     private Company company;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "users_settings_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_settings_id", referencedColumnName = "id")
     private UserSettings userSettings;
 
-    public User(UserFormDTO userFormDTO, String password, Address address, Company company) {
+    public User(UserFormDTO userFormDTO, String password, Address address, Company company, boolean enabled) {
         super(UUID.randomUUID());
         this.lastActivityAt = LocalDateTime.now();
         this.name = userFormDTO.name();
@@ -62,15 +63,14 @@ public class User extends BaseEntity {
         this.address = address;
         this.company = company;
         this.userSettings = new UserSettings(userFormDTO.userSettingsFormDTO(), this);
-        this.enabled = false;
+        this.enabled = enabled;
     }
 
-    public void update(UserFormDTO userFormDTO, Address address, Company company) {
-        this.name = userFormDTO.name();
-        this.role = userFormDTO.role();
-        this.surname = userFormDTO.surname();
-        this.email = userFormDTO.email();
-        this.phoneNumber = userFormDTO.phoneNumber();
+    public void update(UserUpdateFormDTO userUpdateFormDTO, Address address, Company company) {
+        this.name = userUpdateFormDTO.name();
+        this.surname = userUpdateFormDTO.surname();
+        this.email = userUpdateFormDTO.email();
+        this.phoneNumber = userUpdateFormDTO.phoneNumber();
         this.address = address;
         this.company = company;
     }
